@@ -1,6 +1,0 @@
-https://www.bezkoder.com/spring-boot-jpa-h2-example/
-
-mvn spring-boot:run
-
-
-http://localhost:8080/api/assets
