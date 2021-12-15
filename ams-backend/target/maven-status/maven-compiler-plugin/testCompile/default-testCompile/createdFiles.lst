@@ -1,0 +1,5 @@
+com/onur/akan/ams/business/api/AmsSpecificationReadTest.class
+com/onur/akan/ams/business/api/AmsAssetRepositoryMock.class
+com/onur/akan/ams/business/api/AmsAssetReadTest.class
+com/onur/akan/ams/business/api/AmsAssetWriteTest.class
+com/onur/akan/ams/AmsApplicationTests.class
