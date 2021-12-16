@@ -1,10 +1,10 @@
 # ams  
 Asset Management System  
 
-  Project Requirements:  
+## Project Requirements:  
     1-Download and install docket-desktop: https://www.docker.com/products/docker-desktop  
 
-  Running project:  
+## Running project:  
     1-Go to project folder:  
       cd ams  
     2-Start docker containers by this command. (d for detached):  
@@ -24,11 +24,11 @@ Asset Management System
     8-Delete shutdown containers:  
       docker system prune  
 
-  Sample Rest Requests:  
-    GET http://localhost:8080/api/assets/  
-    GET http://localhost:8080/api/assets/1  
-    GET http://localhost:8080/api/specifications/2  
-    POST http://localhost:8080/api/assets  
+## Sample Rest Requests:  
+- GET http://localhost:8080/api/assets/  
+- GET http://localhost:8080/api/assets/1  
+- GET http://localhost:8080/api/specifications/2  
+- POST http://localhost:8080/api/assets  
     {  
           "assetId": 15,  
           "status": 0,  
@@ -50,7 +50,7 @@ Asset Management System
               }  
           ]  
       }  
-      PUT http://localhost:8080/api/assets/1  
+- PUT http://localhost:8080/api/assets/1  
       {  
         "assetId": 1,  
         "status": 2,  
@@ -72,4 +72,4 @@ Asset Management System
             }  
         ]  
     }  
-    DELETE http://localhost:8080/api/assets/3  
+- DELETE http://localhost:8080/api/assets/3  
