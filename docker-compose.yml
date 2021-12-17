@@ -13,5 +13,15 @@ services:
     networks:
       - ams-network
     command: java -jar /home/ams_user/ams-backend-0.0.1-SNAPSHOT.jar com.onur.akan.ams.AmsApplication 
+  ams-frontend-service:
+    container_name: ams-frontend_container
+    build:
+      context: ams-frontend
+      target: 'develop-stage'
+    ports:
+    - '80:8080' #HOST_PORT:CONTAINER_PORT
+    volumes:
+    - './ams-frontend:/app'
+    command: /bin/sh -c "yarn serve"
 networks:
   ams-network:
