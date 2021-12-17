@@ -1,20 +1,19 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Asset Management Vue.js App"/>
-  <MyFirst />
+  <div>
+    <img alt="Vue logo" src="./assets/logo.png">
+    <AssetListComponent :showAssetList="true" :showAssetDetail="false"/>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import MyFirst from './components/MyFirst.vue'
+  import AssetListComponent from './components/AssetListComponent.vue'
 
-export default {
-  name: 'App',
-  components: {
-    MyFirst,
-    HelloWorld
+  export default {
+    name: 'App',
+    components: {
+      AssetListComponent
+    }
   }
-}
 </script>
 
 <style>
@@ -26,9 +25,5 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+@import'~bootstrap/dist/css/bootstrap.css'
 </style>
-
-
-
-
-
