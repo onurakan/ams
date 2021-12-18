@@ -1,8 +1,9 @@
 <template>
-    <div class="container" v-show="showAssetList">
+    <div class="container">
         <h2>Ams Assets</h2>
         <div class="assets">
-            <table class="table table-bordered">
+            <p v-if="isLoading">Loading ...</p>
+            <table class="table table-bordered" v-else>
                 <thead>
                 <tr>
                     <th>Asset Id</th>
@@ -12,76 +13,49 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="asset in assets" :key="asset.id">
-                    <td><a href="" v-on:click.once="openAsset">{{ asset.assetId }}</a></td>
-                    <td>{{ asset.status }}</td>
-                    <td>{{ asset.classification }}</td>
-                    <td>{{ asset.description }}</td>
-                </tr>
+                    <tr v-for="asset in assets" :key="asset.id">
+                        <td><a href="javascript:void(0);" v-on:click="currentAssetId">{{ asset.assetId }}</a></td>
+                        <td>{{ asset.status }}</td>
+                        <td>{{ asset.classification }}</td>
+                        <td>{{ asset.description }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-        <div class="assetDetail" v-show="showAssetDetail">
-            <a href="" v-on:click.once="closeAsset"></a>
-            <AssetComponent :assetId="assetId"/>
-        </div>""
     </div>
 </template>
 
 <script>
     import axios from 'axios';
-    import AssetComponent from './AssetComponent.vue'
-
     export default {
-        components: {
-            AssetComponent
-        },
-        props: {
-            showAssetList: Boolean,
-            showAssetDetail: Boolean,
-        },
+        props: [],
         data() {
             return {
                 assets: [],
                 errors: [],
-                assetId: 1
+                assetId: 1,
+                isLoading: false
             }
         },
 
         methods: {
-            openAsset: function (event) {
-                this.$props.showAssetList=false
-                //this.assetId = event.target.innerHTML
-                alert(event.target.innerHTML);
-                this.$props.showAssetDetail=true
-                alert(this.$props.showAssetDetail);
-            },
-            closeAsset: function () {
-                this.$props.showAssetDetail=false
-                this.$props.showAssetList=true
-            }
-            /**isShowAssetList: function () {
-                    return this.showAssetList;
-                },
-                isShowAssetDetail: function () {
-                    return this.showAssetDetail;
-                },
-                currentAssetId: function () {
-                    return this.assetId;
-                }**/
+                currentAssetId: function (event) {
+                    console.log("AssetListComponent->currentAssetId:" + event.target.innerHTML)
+                    this.$emit('assetId-clicked', event.target.innerHTML);
+                }
         },
-
-
         created() {
+            this.isLoading = true;
             axios.get('http://localhost:8080/api/assets')
-            .then(response => {
-            // JSON responses are automatically parsed.
-            this.assets = response.data
-            })
-            .catch(e => {
-            this.errors.push(e)
-            })
+                .then(response => {
+                        // JSON responses are automatically parsed.
+                        this.assets = response.data
+                        this.isLoading = false;
+                    })
+                .catch(e => {
+                    this.isLoading = false;
+                    this.errors.push(e)
+                })
         }
-
      };
 </script>
