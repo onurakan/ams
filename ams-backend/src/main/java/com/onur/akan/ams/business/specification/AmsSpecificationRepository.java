@@ -9,6 +9,6 @@ public interface AmsSpecificationRepository {
     List<AmsSpecification> readSpecification();
     List<AmsSpecification> readSpecification(AmsSpecification amsAsset);
     AmsSpecification createSpecification(AmsSpecification amsSpecification);
-    void updateSpecification(AmsSpecification amsSpecification);
+    AmsSpecification updateSpecification(AmsSpecification amsSpecification);
     void deleteSpecification(AmsSpecification amsSpecification);
 }

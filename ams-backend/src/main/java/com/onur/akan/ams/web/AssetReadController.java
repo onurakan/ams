@@ -7,6 +7,8 @@ import com.onur.akan.ams.business.asset.AmsAsset;
 import com.onur.akan.ams.business.asset.AmsAssetRepository;
 import com.onur.akan.ams.web.model.Asset;
 import com.onur.akan.ams.web.model.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class AssetReadController {
 
+    private static final Logger log = LoggerFactory.getLogger(AssetReadController.class);
 
     @Autowired
     private AmsAssetRepository amsAssetRepository;
@@ -36,18 +39,24 @@ public class AssetReadController {
         try {
             return new ResponseEntity<>(getAssets(null), HttpStatus.OK);
         } catch (Exception e) {
+            log.error("", e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping({"/assets/{id}"})
     public ResponseEntity<Asset> getAssetById(@PathVariable(value = "id") Long id) {
-        List<Asset> assets = getAssets(id);
+        try {
+            List<Asset> assets = getAssets(id);
 
-        if (assets != null && !assets.isEmpty()) {
-            return new ResponseEntity<>(assets.get(0), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (assets != null && !assets.isEmpty()) {
+                return new ResponseEntity<>(assets.get(0), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            log.error("", e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -8,7 +8,6 @@
         <label>Asset Classification: </label><input type="text" readonly v-model="assetObj.classification" /><br>
         <label>Asset Description: </label><input type="text" readonly v-model="assetObj.description" /><br>
         <label>Asset AssetTag: </label><input type="text" readonly v-model="assetObj.assetTag" /><br>
-        <p>{{assetObjStr}}</p>
       </div>
     </div>
   </div>
@@ -31,7 +30,6 @@
             description: null,
             assetTag: null
           },
-          assetObjStr: null,
           isLoading: false
       }
     },

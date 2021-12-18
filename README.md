@@ -40,7 +40,7 @@ Asset Management System
               {  
                   "id": 16,  
                   "attribute": "new_attribute",  
-                  "attribureDescription": "new_attribute_description",  
+                  "attributeDescription": "new_attribute_description",  
                   "dataType": "new_dataType",  
                   "alphnumericValue": "new_aplhanumericValue",  
                   "alphanumericDescription": "new_alphanumeric_description",  
@@ -62,7 +62,7 @@ Asset Management System
             {  
                 "id": 2,  
                 "attribute": "new_attribute1",  
-                "attribureDescription": "new_attribute_description2",  
+                "attributeDescription": "new_attribute_description2",  
                 "dataType": "new_dataType3",  
                 "alphnumericValue": "new_aplhanumericValue4",  
                 "alphanumericDescription": "new_alphanumeric_description5",  

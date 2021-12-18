@@ -86,12 +86,13 @@ public class AmsAssetRepositoryImpl implements AmsAssetRepository, AmsSpecificat
 
     @Override
     public AmsSpecification createSpecification(AmsSpecification amsSpecification) {
-        return null;
+        SpecificationEntity specificationEntity = specificationRepository.save(ModelMapper.toSpecificationEntity(amsSpecification));
+        return ModelMapper.toAmsSpecification(specificationEntity);
     }
 
     @Override
-    public void updateSpecification(AmsSpecification amsSpecification) {
-
+    public AmsSpecification updateSpecification(AmsSpecification amsSpecification) {
+        return createSpecification(amsSpecification);
     }
 
     @Override
