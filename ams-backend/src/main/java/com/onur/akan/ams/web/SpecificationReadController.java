@@ -38,13 +38,9 @@ public class SpecificationReadController {
             amsRequest.getAmsSpecification().setId(id);
             AmsResponse amsResponse = new AmsSpecificationRead(amsSpecificationRepository).read(amsRequest);
 
-            log.info("burada 1");
             if (amsResponse == null || amsResponse.getAmsSpecificationList() == null) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            log.info("burada 2");
-
-
             return new ResponseEntity<>(amsResponse.getAmsSpecificationList(), HttpStatus.OK);
         } catch (Exception e) {
             log.error("", e);

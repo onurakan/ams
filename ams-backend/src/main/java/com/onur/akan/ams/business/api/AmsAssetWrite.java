@@ -1,6 +1,7 @@
 package com.onur.akan.ams.business.api;
 
 import com.onur.akan.ams.business.asset.AmsAsset;
+import com.onur.akan.ams.business.asset.AmsAssetBuilder;
 import com.onur.akan.ams.business.asset.AmsAssetRepository;
 import com.onur.akan.ams.business.specification.AmsSpecification;
 
@@ -101,9 +102,8 @@ public class AmsAssetWrite {
     }
 
     private AmsAsset readAssetById(Long assetId) {
-        AmsRequest amsRequest = new AmsRequest(new AmsAsset());
-        amsRequest.getAmsAsset().setAssetId(assetId);
-        AmsResponse amsResponse = new AmsAssetRead(amsAssetRepository).read(amsRequest);
+        AmsAsset amsAsset = AmsAssetBuilder.aAmsAsset().withAssetId(assetId).build();
+        AmsResponse amsResponse = new AmsAssetRead(amsAssetRepository).read(new AmsRequest(amsAsset));
         if (amsResponse != null && amsResponse.getAmsAssetList() != null && !amsResponse.getAmsAssetList().isEmpty()) {
             return amsResponse.getAmsAssetList().get(0);
         }

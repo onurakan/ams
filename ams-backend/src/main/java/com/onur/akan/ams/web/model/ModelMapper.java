@@ -2,6 +2,7 @@ package com.onur.akan.ams.web.model;
 
 import com.onur.akan.ams.business.api.AmsRequest;
 import com.onur.akan.ams.business.asset.AmsAsset;
+import com.onur.akan.ams.business.asset.AmsAssetBuilder;
 import com.onur.akan.ams.business.specification.AmsSpecification;
 
 import java.util.ArrayList;
@@ -30,12 +31,14 @@ public class ModelMapper {
     }
 
     public static AmsAsset toAmsAsset(Asset asset) {
-        AmsAsset amsAsset = new AmsAsset();
-        amsAsset.setAssetId(asset.getAssetId());
-        amsAsset.setStatus(asset.getStatus());
-        amsAsset.setClassification(asset.getClassification());
-        amsAsset.setDescription(asset.getDescription());
-        amsAsset.setAssetTag(asset.getAssetTag());
+        AmsAsset amsAsset = AmsAssetBuilder.aAmsAsset()
+                                            .withAssetId(asset.getAssetId())
+                                            .withStatus(asset.getStatus())
+                                            .withClassification(asset.getClassification())
+                                            .withDescription(asset.getDescription())
+                                            .withAssetTag(asset.getAssetTag())
+                                            .build();
+
         if (asset.getSpecificationList() != null) {
             amsAsset.setAmsSpecificationList(new ArrayList<>());
             for (Specification specification : asset.getSpecificationList()) {

@@ -3,6 +3,7 @@ package com.onur.akan.ams.business.asset;
 import com.onur.akan.ams.business.specification.AmsSpecification;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author Onur Akan
@@ -74,5 +75,18 @@ public class AmsAsset {
                 ", assetTag='" + assetTag + '\'' +
                 ", amsSpecificationList=" + amsSpecificationList +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AmsAsset amsAsset = (AmsAsset) o;
+        return Objects.equals(assetId, amsAsset.assetId) && Objects.equals(status, amsAsset.status) && Objects.equals(classification, amsAsset.classification) && Objects.equals(description, amsAsset.description) && Objects.equals(assetTag, amsAsset.assetTag) && Objects.equals(amsSpecificationList, amsAsset.amsSpecificationList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(assetId, status, classification, description, assetTag, amsSpecificationList);
     }
 }

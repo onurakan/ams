@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -33,38 +32,37 @@ public class AssetReadController {
     private AmsAssetRepository amsAssetRepository;
 
     @GetMapping("/assets")
-    public ResponseEntity<List<Asset>> getAllAssets(@RequestParam(required = false) Long id) {
+    public ResponseEntity<List<Asset>> getAllAssets() {
         try {
-            AmsRequest amsRequest = new AmsRequest(new AmsAsset());
-            amsRequest.getAmsAsset().setAssetId(id);
-            AmsResponse amsResponse = new AmsAssetRead(amsAssetRepository).read(amsRequest);
-
-            if (amsResponse == null || amsResponse.getAmsAssetList() == null) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            List<Asset> assets = new ArrayList<Asset>();
-            for (AmsAsset amsAsset : amsResponse.getAmsAssetList()) {
-                assets.add(ModelMapper.toAsset(amsAsset));
-            }
-
-            return new ResponseEntity<>(assets, HttpStatus.OK);
+            return new ResponseEntity<>(getAssets(null), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/assets/{id}")
-    public ResponseEntity<Asset> getAssetById(@PathVariable("id") Long id) {
+    @GetMapping({"/assets/{id}"})
+    public ResponseEntity<Asset> getAssetById(@PathVariable(value = "id") Long id) {
+        List<Asset> assets = getAssets(id);
 
+        if (assets != null && !assets.isEmpty()) {
+            return new ResponseEntity<>(assets.get(0), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private List<Asset> getAssets(Long id) {
         AmsRequest amsRequest = new AmsRequest(new AmsAsset());
         amsRequest.getAmsAsset().setAssetId(id);
         AmsResponse amsResponse = new AmsAssetRead(amsAssetRepository).read(amsRequest);
 
+        List<Asset> assets = null;
         if (amsResponse != null && amsResponse.getAmsAssetList() != null && !amsResponse.getAmsAssetList().isEmpty()) {
-            return new ResponseEntity<>(ModelMapper.toAsset(amsResponse.getAmsAssetList().get(0)), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            assets = new ArrayList<>();
+            for (AmsAsset amsAsset : amsResponse.getAmsAssetList()) {
+                assets.add(ModelMapper.toAsset(amsAsset));
+            }
         }
+        return assets;
     }
 }

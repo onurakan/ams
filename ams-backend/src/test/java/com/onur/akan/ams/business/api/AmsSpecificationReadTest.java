@@ -3,6 +3,9 @@ package com.onur.akan.ams.business.api;
 import com.onur.akan.ams.business.specification.AmsSpecification;
 import org.junit.Test;
 
+/**
+ * @Author Onur Akan
+ */
 public class AmsSpecificationReadTest {
 
     @Test

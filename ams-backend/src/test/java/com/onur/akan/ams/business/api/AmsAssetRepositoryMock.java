@@ -1,34 +1,45 @@
 package com.onur.akan.ams.business.api;
 
 import com.onur.akan.ams.business.asset.AmsAsset;
+import com.onur.akan.ams.business.asset.AmsAssetBuilder;
 import com.onur.akan.ams.business.asset.AmsAssetRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @Author Onur Akan
+ */
 public class AmsAssetRepositoryMock implements AmsAssetRepository {
 
     @Override
     public List<AmsAsset> readAssetAll() {
-        return null;
+
+        return Arrays.asList(
+                AmsAssetBuilder.aAmsAsset().withAssetId(1L).build(),
+                AmsAssetBuilder.aAmsAsset().withAssetId(2L).build(),
+                AmsAssetBuilder.aAmsAsset().withAssetId(3L).build(),
+                AmsAssetBuilder.aAmsAsset().withAssetId(4L).build(),
+                AmsAssetBuilder.aAmsAsset().withAssetId(5L).build()
+        );
     }
 
     @Override
     public List<AmsAsset> readAsset(AmsAsset amsAsset) {
-        return null;
+        return Arrays.asList(amsAsset);
     }
 
     @Override
     public AmsAsset createAsset(AmsAsset amsAsset) {
-        return null;
+        return amsAsset;
     }
 
     @Override
     public AmsAsset updateAsset(AmsAsset amsAsset) {
-        return null;
+        return amsAsset;
     }
 
     @Override
     public void deleteAsset(AmsAsset amsAsset) {
-
     }
 }

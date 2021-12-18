@@ -5,6 +5,7 @@ import com.onur.akan.ams.business.api.AmsAssetWrite;
 import com.onur.akan.ams.business.api.AmsRequest;
 import com.onur.akan.ams.business.api.AmsResponse;
 import com.onur.akan.ams.business.asset.AmsAsset;
+import com.onur.akan.ams.business.asset.AmsAssetBuilder;
 import com.onur.akan.ams.business.asset.AmsAssetRepository;
 import com.onur.akan.ams.business.specification.AmsSpecification;
 import com.onur.akan.ams.database.AmsAssetRepositoryImpl;
@@ -59,15 +60,10 @@ public class AssetWriteController {
     @DeleteMapping("/assets/{id}")
     public ResponseEntity<Long> deleteAsset(@PathVariable("id") Long assetId) {
         try {
-            AmsRequest amsRequest = new AmsRequest(new AmsAsset());
-            amsRequest.getAmsAsset().setAssetId(assetId);
-            boolean isDeleted = new AmsAssetWrite(amsAssetRepository).delete(amsRequest);
+            AmsAsset amsAsset = AmsAssetBuilder.aAmsAsset().withAssetId(assetId).build();
+            boolean isDeleted = new AmsAssetWrite(amsAssetRepository).delete(new AmsRequest(amsAsset));
 
-            if (isDeleted) {
-                return new ResponseEntity<>(assetId, HttpStatus.OK);
-            }
-
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return (isDeleted) ? new ResponseEntity<>(assetId, HttpStatus.OK) :  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -78,10 +74,7 @@ public class AssetWriteController {
         try {
             boolean isUpdated = new AmsAssetWrite(amsAssetRepository).update(new AmsRequest(ModelMapper.toAmsAsset(asset)));
 
-            if (isUpdated) {
-                return new ResponseEntity<>(asset.getAssetId(), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return (isUpdated) ? new ResponseEntity<>(asset.getAssetId(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

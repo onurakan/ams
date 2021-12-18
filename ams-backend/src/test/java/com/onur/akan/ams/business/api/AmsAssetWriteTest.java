@@ -3,6 +3,9 @@ package com.onur.akan.ams.business.api;
 import com.onur.akan.ams.business.asset.AmsAsset;
 import org.junit.Test;
 
+/**
+ * @Author Onur Akan
+ */
 public class AmsAssetWriteTest {
 
     @Test
