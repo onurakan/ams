@@ -47,7 +47,7 @@ public class ModelMapper {
         AmsSpecification amsSpecification = new AmsSpecification();
         amsSpecification.setId(specificationEntity.getId());
         amsSpecification.setAttribute(specificationEntity.getAttribute());
-        amsSpecification.setAttribureDescription(specificationEntity.getAttribureDescription());
+        amsSpecification.setAttributeDescription(specificationEntity.getAttributeDescription());
         amsSpecification.setDataType(specificationEntity.getDataType());
         amsSpecification.setAlphnumericValue(specificationEntity.getAlphnumericValue());
         amsSpecification.setAlphanumericDescription(specificationEntity.getAlphanumericDescription());
@@ -62,7 +62,7 @@ public class ModelMapper {
         SpecificationEntity specificationEntity = new SpecificationEntity();
         specificationEntity.setId(amsSpecification.getId());
         specificationEntity.setAttribute(amsSpecification.getAttribute());
-        specificationEntity.setAttribureDescription(amsSpecification.getAttribureDescription());
+        specificationEntity.setAttributeDescription(amsSpecification.getAttributeDescription());
         specificationEntity.setDataType(amsSpecification.getDataType());
         specificationEntity.setAlphnumericValue(amsSpecification.getAlphnumericValue());
         specificationEntity.setAlphanumericDescription(amsSpecification.getAlphanumericDescription());

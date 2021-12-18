@@ -65,7 +65,7 @@ public class AmsAssetWrite {
             for (Long specKeyFrom : specKeyValueFrom.keySet()) {
                 if (specKeyValueTo.containsKey(specKeyFrom)) {
                     specKeyValueTo.get(specKeyFrom).setAttribute(specKeyValueFrom.get(specKeyFrom).getAttribute());
-                    specKeyValueTo.get(specKeyFrom).setAttribureDescription(specKeyValueFrom.get(specKeyFrom).getAttribureDescription());
+                    specKeyValueTo.get(specKeyFrom).setAttributeDescription(specKeyValueFrom.get(specKeyFrom).getAttributeDescription());
                     specKeyValueTo.get(specKeyFrom).setAlphanumericDescription(specKeyValueFrom.get(specKeyFrom).getAlphanumericDescription());
                     specKeyValueTo.get(specKeyFrom).setDataType(specKeyValueFrom.get(specKeyFrom).getDataType());
                     specKeyValueTo.get(specKeyFrom).setAlphnumericValue(specKeyValueFrom.get(specKeyFrom).getAlphnumericValue());

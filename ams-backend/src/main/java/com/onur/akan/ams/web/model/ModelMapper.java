@@ -4,6 +4,7 @@ import com.onur.akan.ams.business.api.AmsRequest;
 import com.onur.akan.ams.business.asset.AmsAsset;
 import com.onur.akan.ams.business.asset.AmsAssetBuilder;
 import com.onur.akan.ams.business.specification.AmsSpecification;
+import com.onur.akan.ams.business.specification.AmsSpecificationBuilder;
 
 import java.util.ArrayList;
 
@@ -61,7 +62,7 @@ public class ModelMapper {
                 AmsSpecification amsSpecification = new AmsSpecification();
                 amsSpecification.setId(amsSpecification.getId());
                 amsSpecification.setAttribute(specification.getAttribute());
-                amsSpecification.setAttribureDescription(specification.getAttribureDescription());
+                amsSpecification.setAttributeDescription(specification.getAttributeDescription());
                 amsSpecification.setDataType(specification.getDataType());
                 amsSpecification.setAlphnumericValue(specification.getAlphnumericValue());
                 amsSpecification.setAlphanumericDescription(specification.getAlphanumericDescription());
@@ -79,8 +80,8 @@ public class ModelMapper {
         Specification specification = new Specification();
         specification.setId(amsSpecification.getId());
         specification.setAttribute(amsSpecification.getAttribute());
-        specification.setAttribureDescription(amsSpecification.getAttribureDescription());
-        specification.setAlphanumericDescription(amsSpecification.getAttribureDescription());
+        specification.setAttributeDescription(amsSpecification.getAttributeDescription());
+        specification.setAlphanumericDescription(amsSpecification.getAttributeDescription());
         specification.setDataType(amsSpecification.getDataType());
         specification.setAlphnumericValue(amsSpecification.getAlphnumericValue());
         specification.setAlphanumericDescription(amsSpecification.getAlphanumericDescription());
@@ -91,18 +92,18 @@ public class ModelMapper {
         return specification;
     }
 
-    private static AmsSpecification toAmsSpecification(Specification specification) {
-        AmsSpecification amsSpecification = new AmsSpecification();
-        amsSpecification.setId(specification.getId());
-        amsSpecification.setAttribute(specification.getAttribute());
-        amsSpecification.setAttribureDescription(specification.getAttribureDescription());
-        amsSpecification.setDataType(specification.getDataType());
-        amsSpecification.setAlphnumericValue(specification.getAlphnumericValue());
-        amsSpecification.setAlphanumericDescription(specification.getAlphanumericDescription());
-        amsSpecification.setNumericValue(specification.getNumericValue());
-        amsSpecification.setNumericDescription(specification.getNumericDescription());
-        amsSpecification.setUnitOfMeasure(specification.getUnitOfMeasure());
-        amsSpecification.setTableValue(specification.getTableValue());
-        return amsSpecification;
+    public static AmsSpecification toAmsSpecification(Specification specification) {
+        return AmsSpecificationBuilder.aAmsSpecification()
+                                .withId(specification.getId())
+                                .withAttribute(specification.getAttribute())
+                                .withAttributeDescription(specification.getAttributeDescription())
+                                .withDataType(specification.getDataType())
+                                .withAlphanumericValue(specification.getAlphnumericValue())
+                                .withAlphanumericDescription(specification.getAlphanumericDescription())
+                                .withNumericValue(specification.getNumericValue())
+                                .withNumericDescription(specification.getNumericDescription())
+                                .withUnitOfMeasure(specification.getUnitOfMeasure())
+                                .withTableValue(specification.getTableValue())
+                                .build();
     }
 }

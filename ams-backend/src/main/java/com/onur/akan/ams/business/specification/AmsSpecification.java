@@ -7,7 +7,7 @@ public class AmsSpecification {
 
     private Long id;
     private String attribute;
-    private String attribureDescription;
+    private String attributeDescription;
     private String dataType;
     private String alphnumericValue;
     private String alphanumericDescription;
@@ -32,12 +32,12 @@ public class AmsSpecification {
         this.attribute = attribute;
     }
 
-    public String getAttribureDescription() {
-        return attribureDescription;
+    public String getAttributeDescription() {
+        return attributeDescription;
     }
 
-    public void setAttribureDescription(String attribureDescription) {
-        this.attribureDescription = attribureDescription;
+    public void setAttributeDescription(String attributeDescription) {
+        this.attributeDescription = attributeDescription;
     }
 
     public String getDataType() {

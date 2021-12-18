@@ -30,6 +30,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - https://stackoverflow.com/questions/42040317/cannot-find-module-for-a-node-js-app-running-in-a-docker-compose-environment/56949043
 - https://www.digitalocean.com/community/tutorials/vuejs-rest-api-axios
+- https://stackoverflow.com/questions/45050119/click-to-edit-text-field-with-vue
 
 
 # Installed Npm packages:

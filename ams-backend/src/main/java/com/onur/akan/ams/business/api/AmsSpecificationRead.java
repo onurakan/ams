@@ -16,8 +16,8 @@ public class AmsSpecificationRead {
     public AmsResponse read(AmsRequest amsRequest) {
         //TODO implement business rules here
         if (amsRequest == null) throw new AmsRequestException("amsRequest cannot be null");
-        if (amsRequest.getAmsSpecification() == null) throw new AmsRequestException("amsRequest.amsAsset cannot be null");
-        if (amsRequest.getAmsSpecification().getId() == null) throw new AmsRequestException("amsRequest.amsAsset.assetId cannot be null");
+        if (amsRequest.getAmsSpecification() == null) throw new AmsRequestException("amsRequest.amsSpecification cannot be null");
+        if (amsRequest.getAmsSpecification().getId() == null) throw new AmsRequestException("amsRequest.amsSpecification.id cannot be null");
 
         List<AmsSpecification> amsSpecificationList = amsSpecificationRepository.readSpecification((amsRequest.getAmsSpecification()));
         AmsResponse amsResponse = new AmsResponse();

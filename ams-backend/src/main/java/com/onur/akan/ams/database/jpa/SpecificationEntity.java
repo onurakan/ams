@@ -16,8 +16,8 @@ public class SpecificationEntity {
     private Long id;
     @Column(name = "vattribute")
     private String attribute;
-    @Column(name = "vattribureDescription")
-    private String attribureDescription;
+    @Column(name = "vattributeDescription")
+    private String attributeDescription;
     @Column(name = "vdataType")
     private String dataType;
     @Column(name = "valphnumericValue")
@@ -49,12 +49,12 @@ public class SpecificationEntity {
         this.attribute = attribute;
     }
 
-    public String getAttribureDescription() {
-        return attribureDescription;
+    public String getAttributeDescription() {
+        return attributeDescription;
     }
 
-    public void setAttribureDescription(String attribureDescription) {
-        this.attribureDescription = attribureDescription;
+    public void setAttributeDescription(String attributeDescription) {
+        this.attributeDescription = attributeDescription;
     }
 
     public String getDataType() {
@@ -118,7 +118,7 @@ public class SpecificationEntity {
         return "SpecificationEntity{" +
                 "id=" + id +
                 ", attribute='" + attribute + '\'' +
-                ", attribureDescription='" + attribureDescription + '\'' +
+                ", attributeDescription='" + attributeDescription + '\'' +
                 ", dataType='" + dataType + '\'' +
                 ", alphnumericValue='" + alphnumericValue + '\'' +
                 ", alphanumericDescription='" + alphanumericDescription + '\'' +
