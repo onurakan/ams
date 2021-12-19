@@ -100,7 +100,6 @@
                 specifications: [],
                 isLoading: true,
                 isUpdating: false,
-                editedTodo: null,
                 edit2: false,
                 edit3: false,
                 edit4: false,
@@ -122,7 +121,7 @@
                 this.specifications.forEach(element => {
                     if (element.id == specificationId) {
                         alert("specificationId=" + specificationId + " will be updated!");
-                        console.log(JSON.stringify(element));
+                        console.log("SpecificationsComponent->updateSpecification request: " +JSON.stringify(element));
                         axios.put('http://localhost:8080/api/specifications/' + specificationId, element)
                                 .then(response => {
                                                     // JSON responses are automatically parsed.
@@ -153,9 +152,6 @@
                             this.errors.push(e)
                             })
                     }
-            },
-            editTodo: function (todo) {
-               this.editedTodo = todo
             }
         },
         directives: {

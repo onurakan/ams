@@ -32,6 +32,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - https://www.digitalocean.com/community/tutorials/vuejs-rest-api-axios
 - https://stackoverflow.com/questions/45050119/click-to-edit-text-field-with-vue
 
+- https://divtable.com/generator/
+
 
 # Installed Npm packages:
 npm install vue bootstrap bootstrap-vue
