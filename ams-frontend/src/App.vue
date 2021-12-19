@@ -3,10 +3,11 @@
     <img alt="Vue logo" src="./assets/logo.png">    
     <div class="assetDetail" v-if="assetId">
       <a href="javascript:void(0);" v-on:click="closeAsset">Close Asset</a>
-      <TabComponent :tabAssetId="assetId"/>
+      <tab-component :tabAssetId="assetId"/>
     </div>
     <div v-else>
-      <AssetListComponent @assetId-clicked="setParentAssetId"/>
+      <a href="javascript:void(0);" v-on:click="openNewAsset">New Asset</a>
+      <asset-list-component @assetId-clicked="setParentAssetId"/>
     </div>
   </div>
 </template>
@@ -35,7 +36,12 @@
         this.assetId = assetId;
       },
       closeAsset: function () {
+        console.log("App->"+'closeAsset: assetId='+ this.assetId);
         this.assetId = null;
+      },
+      openNewAsset: function() {
+        console.log("App->"+'openNewAsset');
+        this.assetId = -1;
       }
     }
   }

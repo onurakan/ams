@@ -151,7 +151,10 @@
                             this.isLoading=false;
                             this.errors.push(e)
                             })
-                    }
+                } else {
+                    this.specifications = [];
+                    this.isLoading = false;
+                }
             }
         },
         directives: {
