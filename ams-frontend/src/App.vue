@@ -5,7 +5,9 @@
       <a href="javascript:void(0);" v-on:click="closeAsset">Close Asset</a>
       <TabComponent :tabAssetId="assetId"/>
     </div>
-    <AssetListComponent @assetId-clicked="setParentAssetId" v-else/>
+    <div v-else>
+      <AssetListComponent @assetId-clicked="setParentAssetId"/>
+    </div>
   </div>
 </template>
 
@@ -31,7 +33,6 @@
       setParentAssetId: function (assetId) {
         console.log("App->"+'setParentAssetId: Changed parentAssetId='+assetId);
         this.assetId = assetId;
-        //this.fetchAsset(assetId)
       },
       closeAsset: function () {
         this.assetId = null;
