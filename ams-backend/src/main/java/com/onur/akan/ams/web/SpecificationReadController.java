@@ -1,13 +1,12 @@
 package com.onur.akan.ams.web;
 
+import com.onur.akan.ams.AmsBusinessApiFactory;
 import com.onur.akan.ams.business.api.AmsRequest;
 import com.onur.akan.ams.business.api.AmsResponse;
-import com.onur.akan.ams.business.api.AmsSpecificationRead;
 import com.onur.akan.ams.business.specification.AmsSpecification;
 import com.onur.akan.ams.business.specification.AmsSpecificationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,15 +27,12 @@ public class SpecificationReadController {
 
     private static final Logger log = LoggerFactory.getLogger(AmsSpecificationRepository.class);
 
-    @Autowired
-    private AmsSpecificationRepository amsSpecificationRepository;
-
     @GetMapping("/specifications/{id}")
     public ResponseEntity<List<AmsSpecification>> getSpecification(@PathVariable("id") Long id) {
         try {
             AmsRequest amsRequest = new AmsRequest(new AmsSpecification());
             amsRequest.getAmsSpecification().setId(id);
-            AmsResponse amsResponse = new AmsSpecificationRead(amsSpecificationRepository).read(amsRequest);
+            AmsResponse amsResponse = AmsBusinessApiFactory.getAmsSpecificationRead().read(amsRequest);
 
             if (amsResponse == null || amsResponse.getAmsSpecificationList() == null) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

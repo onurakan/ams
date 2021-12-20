@@ -1,16 +1,14 @@
 package com.onur.akan.ams.web;
 
-import com.onur.akan.ams.business.api.AmsAssetWrite;
+import com.onur.akan.ams.AmsBusinessApiFactory;
 import com.onur.akan.ams.business.api.AmsRequest;
 import com.onur.akan.ams.business.api.AmsResponse;
 import com.onur.akan.ams.business.asset.AmsAsset;
 import com.onur.akan.ams.business.asset.AmsAssetBuilder;
-import com.onur.akan.ams.business.asset.AmsAssetRepository;
 import com.onur.akan.ams.web.model.Asset;
 import com.onur.akan.ams.web.model.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,14 +30,11 @@ public class AssetWriteController {
 
     private static final Logger log = LoggerFactory.getLogger(AssetWriteController.class);
 
-    @Autowired
-    private AmsAssetRepository amsAssetRepository;
-
     @PostMapping("/assets")
     public ResponseEntity<Asset> createAsset(@RequestBody Asset asset) {
         try {
             AmsRequest amsRequest = ModelMapper.toAmsRequest(asset);
-            AmsResponse amsResponse = new AmsAssetWrite(amsAssetRepository).create(amsRequest);
+            AmsResponse amsResponse = AmsBusinessApiFactory.getAmsAssetWrite().create(amsRequest);
 
             if (amsResponse != null && amsResponse.getAmsAssetList() != null && !amsResponse.getAmsAssetList().isEmpty()) {
                 return new ResponseEntity<>(ModelMapper.toAsset(amsResponse.getAmsAssetList().get(0)), HttpStatus.CREATED);
@@ -56,7 +51,7 @@ public class AssetWriteController {
     public ResponseEntity<Long> deleteAsset(@PathVariable("id") Long assetId) {
         try {
             AmsAsset amsAsset = AmsAssetBuilder.aAmsAsset().withAssetId(assetId).build();
-            boolean isDeleted = new AmsAssetWrite(amsAssetRepository).delete(new AmsRequest(amsAsset));
+            boolean isDeleted = AmsBusinessApiFactory.getAmsAssetWrite().delete(new AmsRequest(amsAsset));
 
             return (isDeleted) ? new ResponseEntity<>(assetId, HttpStatus.OK) :  new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -68,7 +63,7 @@ public class AssetWriteController {
     @PutMapping(value = "/assets/{id}")
     public ResponseEntity<Long> updateAsset(@RequestBody Asset asset) {
         try {
-            boolean isUpdated = new AmsAssetWrite(amsAssetRepository).update(new AmsRequest(ModelMapper.toAmsAsset(asset)));
+            boolean isUpdated = AmsBusinessApiFactory.getAmsAssetWrite().update(new AmsRequest(ModelMapper.toAmsAsset(asset)));
 
             return (isUpdated) ? new ResponseEntity<>(asset.getAssetId(), HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {

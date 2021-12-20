@@ -1,15 +1,13 @@
 package com.onur.akan.ams.web;
 
-import com.onur.akan.ams.business.api.AmsAssetRead;
+import com.onur.akan.ams.AmsBusinessApiFactory;
 import com.onur.akan.ams.business.api.AmsRequest;
 import com.onur.akan.ams.business.api.AmsResponse;
 import com.onur.akan.ams.business.asset.AmsAsset;
-import com.onur.akan.ams.business.asset.AmsAssetRepository;
 import com.onur.akan.ams.web.model.Asset;
 import com.onur.akan.ams.web.model.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,9 +28,6 @@ import java.util.List;
 public class AssetReadController {
 
     private static final Logger log = LoggerFactory.getLogger(AssetReadController.class);
-
-    @Autowired
-    private AmsAssetRepository amsAssetRepository;
 
     @GetMapping("/assets")
     public ResponseEntity<List<Asset>> getAllAssets() {
@@ -63,7 +58,7 @@ public class AssetReadController {
     private List<Asset> getAssets(Long id) {
         AmsRequest amsRequest = new AmsRequest(new AmsAsset());
         amsRequest.getAmsAsset().setAssetId(id);
-        AmsResponse amsResponse = new AmsAssetRead(amsAssetRepository).read(amsRequest);
+        AmsResponse amsResponse = AmsBusinessApiFactory.getAmsAssetRead().read(amsRequest);
 
         List<Asset> assets = null;
         if (amsResponse != null && amsResponse.getAmsAssetList() != null && !amsResponse.getAmsAssetList().isEmpty()) {
