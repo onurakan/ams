@@ -1,8 +1,6 @@
-version: "3.7"
+version: "3.9"
 
-services:
-  ams-backend-service:
-    container_name: ams-backend_container
+x-default-ams-backend-service: &default-ams-backend-service
     image: ams-backend-img
     build:
       context: ams-backend
@@ -12,8 +10,27 @@ services:
       - "./ams-backend/target/:/home/ams_user"
     networks:
       - ams-network
-    command: java -jar /home/ams_user/ams-backend-0.0.1-SNAPSHOT.jar com.onur.akan.ams.AmsApplication 
+    command: java -jar /home/ams_user/ams-backend-0.0.1-SNAPSHOT.jar com.onur.akan.ams.AmsApplication
+
+services:
+  ams-backend-h2-services:
+    << : *default-ams-backend-service
+    container_name: ams-backend-h2_container
+    profiles: ["profile-default"]
+
+  ams-backend-mysql-service:
+    << : *default-ams-backend-service
+    container_name: ams-backend-mysql_container
+    profiles: ["profile-mysql"]
+    environment:
+      SPRING_PROFILES_ACTIVE : container
+      DB_URL : jdbc:mysql://ams-mysql-db-service:3306/ams_db
+      DB_USER : ams_db_user
+      DB_PASSWORD : p_ams_db_user
+      DB_SPRING_JPA_SHOW_SQL: 'true'
+
   ams-frontend-service:
+    profiles: ["profile-default", "profile-mysql"]
     container_name: ams-frontend_container
     build:
       context: ams-frontend
@@ -23,5 +40,23 @@ services:
     volumes:
     - './ams-frontend:/app'
     command: /bin/sh -c "yarn serve"
+
+  ams-mysql-db-service:
+    container_name: ams-mysql-db_container
+    profiles: ["profile-mysql"]
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD : p_root
+      MYSQL_USER: ams_db_user
+      MYSQL_PASSWORD: p_ams_db_user
+      MYSQL_DATABASE: ams_db
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - ./ams-mysql-db/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - ams-network
+      
 networks:
   ams-network:

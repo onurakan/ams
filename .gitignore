@@ -53,3 +53,7 @@ target/
 **/*.njsproj
 **/*.sln
 **/*.sw?
+
+
+# ams-mysql-db
+ams-mysql-db/data
