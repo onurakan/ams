@@ -12,8 +12,21 @@ x-default-ams-backend-service: &default-ams-backend-service
       - ams-network
     command: java -jar /home/ams_user/ams-backend-0.0.1-SNAPSHOT.jar com.onur.akan.ams.AmsApplication
 
+
 services:
-  ams-backend-h2-services:
+  ams-frontend-service:
+    profiles: ["profile-default", "profile-mysql"]
+    container_name: ams-frontend_container
+    build:
+      context: ams-frontend
+      target: 'develop-stage'
+    ports:
+    - '80:8080' #HOST_PORT:CONTAINER_PORT
+    volumes:
+    - './ams-frontend:/app'
+    command: /bin/sh -c "yarn serve"
+
+  ams-backend-h2-service:
     << : *default-ams-backend-service
     container_name: ams-backend-h2_container
     profiles: ["profile-default"]
@@ -28,18 +41,6 @@ services:
       DB_USER : ams_db_user
       DB_PASSWORD : p_ams_db_user
       DB_SPRING_JPA_SHOW_SQL: 'true'
-
-  ams-frontend-service:
-    profiles: ["profile-default", "profile-mysql"]
-    container_name: ams-frontend_container
-    build:
-      context: ams-frontend
-      target: 'develop-stage'
-    ports:
-    - '80:8080' #HOST_PORT:CONTAINER_PORT
-    volumes:
-    - './ams-frontend:/app'
-    command: /bin/sh -c "yarn serve"
 
   ams-mysql-db-service:
     container_name: ams-mysql-db_container
