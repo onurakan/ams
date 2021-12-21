@@ -93,7 +93,7 @@
       this.fetchAsset(this.assetId);
     },
     methods: {
-        fetchAsset : function (inAssetId) {
+        fetchAsset : async function (inAssetId) {
           if (inAssetId>0) {
            console.log("AssetComponent->fetchAsset request for assetId=" + inAssetId)
            this.isLoading=true;

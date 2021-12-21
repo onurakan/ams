@@ -10,6 +10,10 @@ System consists of following container services:
       This is the optional database of the system. It is used when docker-compose is used with profile 'profile-mysql'. Check below how to start mysql container individually.
       Otherwise spring boot embedded H2 database is used.
 
+# Ams System Topology 
+  Check out the system topology using on https://draw.io/ website.
+  You need to import ./ams-system-topology.drawio file to draw.io
+
 ## Project Requirements:  
     1-Download and install docket-desktop: https://www.docker.com/products/docker-desktop
 
@@ -88,3 +92,10 @@ System consists of following container services:
         ]  
     }  
 - DELETE http://localhost:8080/api/assets/3  
+
+
+### Ams Project References:
+- https://dzone.com/articles/spring-session-demonstration
+- http://www.java-allandsundry.com/2015/04/spring-session-demonstration-using.html
+  - https://github.com/bijukunjummen/shopping-cart-cf-app
+  - https://www.baeldung.com/spring-security-extra-login-fields login page, login filter, spring security
