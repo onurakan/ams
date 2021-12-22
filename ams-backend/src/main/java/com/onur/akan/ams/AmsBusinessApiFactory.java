@@ -17,32 +17,39 @@ import org.springframework.stereotype.Component;
 @Component
 public class AmsBusinessApiFactory implements ApplicationContextAware {
 
-    private static ApplicationContext applicationContext;
-
-    public static final String AMS_ASSET_REPOSITORY = "amsAssetRepositoryImpl"; //Baska bir db entegrasyonunda onun ipmlementation'i ile degistirilebilir.
+    // Baska tipte repository entegrasyonunda onun ipmlementation'i ile degistirilebilir.
+    public static final String AMS_ASSET_REPOSITORY = "amsAssetRepositoryImpl";
 
     @Override
-    public void setApplicationContext(ApplicationContext _applicationContext) throws BeansException {
-        applicationContext = _applicationContext;
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        amsAssetRepository         = applicationContext.getBean(AMS_ASSET_REPOSITORY, AmsAssetRepository.class);
+        amsSpecificationRepository = applicationContext.getBean(AMS_ASSET_REPOSITORY, AmsSpecificationRepository.class);
     }
 
-    public static AmsAssetRead getAmsAssetRead () {
-        AmsAssetRepository amsAssetRepository = applicationContext.getBean(AMS_ASSET_REPOSITORY, AmsAssetRepository.class);
-        return new AmsAssetRead(amsAssetRepository);
+    private static AmsAssetRepository amsAssetRepository;
+    private static AmsSpecificationRepository amsSpecificationRepository;
+    private static AmsAssetRead amsAssetRead;
+    private static AmsAssetWrite amsAssetWrite;
+    private static AmsSpecificationRead amsSpecificationRead;
+    private static AmsSpecificationWrite amsSpecificationWrite;
+
+    public synchronized static AmsAssetRead getAmsAssetRead () {
+        return (amsAssetRead == null) ? amsAssetRead = new AmsAssetRead(amsAssetRepository) : amsAssetRead;
     }
 
-    public static AmsAssetWrite getAmsAssetWrite() {
-        AmsAssetRepository amsAssetRepository = applicationContext.getBean(AMS_ASSET_REPOSITORY, AmsAssetRepository.class);
-        return new AmsAssetWrite(amsAssetRepository);
+    public synchronized static AmsAssetWrite getAmsAssetWrite() {
+        return (amsAssetWrite == null) ? amsAssetWrite = new AmsAssetWrite(amsAssetRepository) : amsAssetWrite;
     }
 
-    public static AmsSpecificationRead getAmsSpecificationRead() {
-        AmsSpecificationRepository amsSpecificationRepository = applicationContext.getBean(AMS_ASSET_REPOSITORY, AmsSpecificationRepository.class);
-        return new AmsSpecificationRead(amsSpecificationRepository);
+    public synchronized static AmsSpecificationRead getAmsSpecificationRead() {
+        return (amsSpecificationRead == null) ? amsSpecificationRead = new AmsSpecificationRead(amsSpecificationRepository) : amsSpecificationRead;
     }
 
-    public static AmsSpecificationWrite getAmsSpecificationWrite() {
-        AmsSpecificationRepository amsSpecificationRepository = applicationContext.getBean(AMS_ASSET_REPOSITORY, AmsSpecificationRepository.class);
-        return new AmsSpecificationWrite(amsSpecificationRepository);
+    public synchronized static AmsSpecificationWrite getAmsSpecificationWrite() {
+        return (amsSpecificationWrite == null) ? amsSpecificationWrite = new AmsSpecificationWrite(amsSpecificationRepository) : amsSpecificationWrite;
+    }
+
+    public static void setAmsAssetRepository(AmsAssetRepository amsAssetRepository) {
+        AmsBusinessApiFactory.amsAssetRepository = amsAssetRepository;
     }
 }

@@ -1,4 +1,4 @@
-package com.onur.akan.ams.business.api;
+package com.onur.akan.ams.business.api.mocks;
 
 import com.onur.akan.ams.business.asset.AmsAsset;
 import com.onur.akan.ams.business.asset.AmsAssetBuilder;

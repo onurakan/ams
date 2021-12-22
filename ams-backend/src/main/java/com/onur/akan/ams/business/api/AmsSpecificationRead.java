@@ -13,7 +13,7 @@ public class AmsSpecificationRead {
         this.amsSpecificationRepository = amsSpecificationRepository;
     }
 
-    public AmsResponse read(AmsRequest amsRequest) {
+    public AmsResponse read(AmsRequest amsRequest) throws AmsRequestException {
         //TODO implement business rules here
         if (amsRequest == null) throw new AmsRequestException("amsRequest cannot be null");
         if (amsRequest.getAmsSpecification() == null) throw new AmsRequestException("amsRequest.amsSpecification cannot be null");

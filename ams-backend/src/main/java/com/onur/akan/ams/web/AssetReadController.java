@@ -2,6 +2,7 @@ package com.onur.akan.ams.web;
 
 import com.onur.akan.ams.AmsBusinessApiFactory;
 import com.onur.akan.ams.business.api.AmsRequest;
+import com.onur.akan.ams.business.api.AmsRequestException;
 import com.onur.akan.ams.business.api.AmsResponse;
 import com.onur.akan.ams.business.asset.AmsAsset;
 import com.onur.akan.ams.web.model.Asset;
@@ -55,7 +56,7 @@ public class AssetReadController {
         }
     }
 
-    private List<Asset> getAssets(Long id) {
+    private List<Asset> getAssets(Long id) throws AmsRequestException {
         AmsRequest amsRequest = new AmsRequest(new AmsAsset());
         amsRequest.getAmsAsset().setAssetId(id);
         AmsResponse amsResponse = AmsBusinessApiFactory.getAmsAssetRead().read(amsRequest);

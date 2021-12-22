@@ -61,4 +61,16 @@ public class Asset {
     public void setSpecificationList(List<Specification> specificationList) {
         this.specificationList = specificationList;
     }
+
+    @Override
+    public String toString() {
+        return "Asset{" +
+                "assetId=" + assetId +
+                ", status=" + status +
+                ", classification='" + classification + '\'' +
+                ", description='" + description + '\'' +
+                ", assetTag='" + assetTag + '\'' +
+                ", specificationList=" + specificationList +
+                '}';
+    }
 }

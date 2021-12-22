@@ -1,5 +1,7 @@
 package com.onur.akan.ams.business.specification;
 
+import java.util.Objects;
+
 /**
  * @Author Onur Akan
  */
@@ -94,5 +96,18 @@ public class AmsSpecification {
 
     public void setTableValue(String tableValue) {
         this.tableValue = tableValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AmsSpecification that = (AmsSpecification) o;
+        return id.equals(that.id) && Objects.equals(attribute, that.attribute) && Objects.equals(attributeDescription, that.attributeDescription) && Objects.equals(dataType, that.dataType) && Objects.equals(alphnumericValue, that.alphnumericValue) && Objects.equals(alphanumericDescription, that.alphanumericDescription) && Objects.equals(numericValue, that.numericValue) && Objects.equals(numericDescription, that.numericDescription) && Objects.equals(unitOfMeasure, that.unitOfMeasure) && Objects.equals(tableValue, that.tableValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, attribute, attributeDescription, dataType, alphnumericValue, alphanumericDescription, numericValue, numericDescription, unitOfMeasure, tableValue);
     }
 }

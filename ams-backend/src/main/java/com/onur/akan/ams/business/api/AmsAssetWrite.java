@@ -22,7 +22,7 @@ public class AmsAssetWrite {
         this.amsAssetRepository = amsAssetRepository;
     }
 
-    public AmsResponse create(AmsRequest amsRequest) {
+    public AmsResponse create(AmsRequest amsRequest) throws AmsRequestException {
         //TODO implement business rules here
         if (amsRequest == null) throw new AmsRequestException("amsRequest cannot be null");
         if (amsRequest.getAmsAsset() == null) throw new AmsRequestException("amsRequest.amsAsset cannot be null");
@@ -34,7 +34,7 @@ public class AmsAssetWrite {
         amsResponse.getAmsAssetList().add(amsAsset);
         return amsResponse;
     }
-    public boolean update(AmsRequest amsRequest) {
+    public boolean update(AmsRequest amsRequest) throws AmsRequestException {
         if (amsRequest == null) throw new AmsRequestException("amsRequest cannot be null");
         if (amsRequest.getAmsAsset().getAssetId() == null) throw new AmsRequestException("amsRequest.amsAsset.assetId cannot be null");
 
@@ -88,7 +88,7 @@ public class AmsAssetWrite {
         return result;
     }
 
-    public boolean delete(AmsRequest amsRequest) {
+    public boolean delete(AmsRequest amsRequest) throws AmsRequestException {
         if (amsRequest == null) throw new AmsRequestException("amsRequest cannot be null");
         if (amsRequest.getAmsAsset() == null) throw new AmsRequestException("amsRequest cannot be null");
         if (amsRequest.getAmsAsset().getAssetId() == null) throw new AmsRequestException("amsRequest.amsAsset.assetID cannot be null");
@@ -101,7 +101,7 @@ public class AmsAssetWrite {
         return false;
     }
 
-    private AmsAsset readAssetById(Long assetId) {
+    private AmsAsset readAssetById(Long assetId) throws AmsRequestException {
         AmsAsset amsAsset = AmsAssetBuilder.aAmsAsset().withAssetId(assetId).build();
         AmsResponse amsResponse = new AmsAssetRead(amsAssetRepository).read(new AmsRequest(amsAsset));
         if (amsResponse != null && amsResponse.getAmsAssetList() != null && !amsResponse.getAmsAssetList().isEmpty()) {

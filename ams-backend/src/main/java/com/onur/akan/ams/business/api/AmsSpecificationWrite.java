@@ -12,7 +12,7 @@ public class AmsSpecificationWrite {
         this.amsSpecificationRepository = amsSpecificationRepository;
     }
 
-    public boolean update(AmsRequest amsRequest) {
+    public boolean update(AmsRequest amsRequest) throws AmsRequestException {
         if (amsRequest == null) throw new AmsRequestException("amsRequest cannot be null");
         if (amsRequest.getAmsSpecification() == null) throw new AmsRequestException("amsRequest.amsAsset.amsSpecification cannot be null");
 
@@ -54,7 +54,7 @@ public class AmsSpecificationWrite {
         }
     }
 
-    private AmsSpecification readSpecificationById(Long specificationId) {
+    private AmsSpecification readSpecificationById(Long specificationId) throws AmsRequestException {
         AmsSpecification amsSpecification = AmsSpecificationBuilder.aAmsSpecification().withId(specificationId).build();
         AmsResponse amsResponse = new AmsSpecificationRead(amsSpecificationRepository).read(new AmsRequest(amsSpecification));
         if (amsResponse != null && amsResponse.getAmsSpecificationList() != null && !amsResponse.getAmsSpecificationList().isEmpty()) {

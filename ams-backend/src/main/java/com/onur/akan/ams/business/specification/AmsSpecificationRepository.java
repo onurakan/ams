@@ -7,7 +7,7 @@ import java.util.List;
  */
 public interface AmsSpecificationRepository {
     List<AmsSpecification> readSpecification();
-    List<AmsSpecification> readSpecification(AmsSpecification amsAsset);
+    List<AmsSpecification> readSpecification(AmsSpecification amsSpecification);
     AmsSpecification createSpecification(AmsSpecification amsSpecification);
     AmsSpecification updateSpecification(AmsSpecification amsSpecification);
     void deleteSpecification(AmsSpecification amsSpecification);

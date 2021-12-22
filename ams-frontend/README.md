@@ -23,7 +23,7 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### Ams Project References:
+### Ams Frontend Project References:
 - https://dev.to/josesrodriguez610/vuejs-starting-a-new-project-ke1
 - https://oguzcandemircan.com/docker-ile-vuejs-projesi-nasil-olusturulur-gelistirlir-ve-yayinlanir
 - https://vuejs.org/v2/cookbook/using-axios-to-consume-apis.html

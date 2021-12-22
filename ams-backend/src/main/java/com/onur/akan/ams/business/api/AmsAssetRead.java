@@ -16,7 +16,7 @@ public class AmsAssetRead {
         this.amsAssetRepository = amsAssetRepository;
     }
 
-    public AmsResponse read(AmsRequest amsRequest) {
+    public AmsResponse read(AmsRequest amsRequest) throws AmsRequestException{
         //TODO implement business rules here
         if (amsRequest == null) throw new AmsRequestException("amsRequest cannot be null");
         if (amsRequest.getAmsAsset() == null) throw new AmsRequestException("amsRequest.amsAsset cannot be null");
