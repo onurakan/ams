@@ -3,6 +3,8 @@
         <h2>Ams Assets</h2>
         <div class="assets">
             <p v-if="isLoading">Loading ...</p>
+            <p v-else-if="isError">Error occured: "{{requestError}}"</p>
+
             <table class="table table-bordered" v-else>
                 <thead>
                 <tr>
@@ -41,7 +43,9 @@
                 filteredAssets: [],
                 errors: [],
                 assetId: 1,
-                isLoading: false
+                isLoading: false,
+                isError: false,
+                requestError : null
             }
         },
 
@@ -67,7 +71,8 @@
         },
         created() {
             this.isLoading = true;
-            axios.get('http://localhost:8080/api/assets')
+            this.isError = false;
+            axios.get(this.ams_backend_url + '/api/assets', this.auth)
                 .then(response => {
                         // JSON responses are automatically parsed.
                         this.assets = response.data
@@ -76,7 +81,12 @@
                     })
                 .catch(e => {
                     this.isLoading = false;
-                    this.errors.push(e)
+
+                    if (e.response.status) {
+                        this.isError = true;
+                        this.requestError = e.response.status + "-" + e.response.data.error;
+                    }
+                    this.errors.push(e);
                 })
         }
      };

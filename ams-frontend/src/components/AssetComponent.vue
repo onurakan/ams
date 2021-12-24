@@ -2,6 +2,7 @@
   <div>
     <p v-if="isLoading">Loading...</p>
     <p v-else-if="isUpdating">Updating, please wait ...</p>
+    <p v-else-if="isError">Error occured: "{{requestError}}"</p>
     <div v-else>
 
 
@@ -76,6 +77,8 @@
           },
           isLoading: false,
           isUpdating: false,
+          isError: false,
+          requestError : null,
           edit3: false,
           edit4: false,
           edit5: false,
@@ -95,9 +98,10 @@
     methods: {
         fetchAsset : async function (inAssetId) {
           if (inAssetId>0) {
-           console.log("AssetComponent->fetchAsset request for assetId=" + inAssetId)
-           this.isLoading=true;
-            axios.get('http://localhost:8080/api/assets/' + inAssetId)
+            console.log("AssetComponent->fetchAsset request for assetId=" + inAssetId)
+            this.isLoading=true;
+            this.isError = false;
+            axios.get(this.ams_backend_url + '/api/assets/' + inAssetId, this.auth)
                 .then(response => {
                                     // JSON responses are automatically parsed.
                                     console.log("AssetComponent->fetchSpecifications response:" + JSON.stringify(response.data));
@@ -106,7 +110,12 @@
                                   })
                 .catch(e => {
                   this.isLoading=false;
-                  this.errors.push(e)
+                  
+                  if (e.response.status) {
+                    this.isError = true;
+                    this.requestError = e.response.status + "-" + e.response.data.error;
+                  }
+                  this.errors.push(e);
                 })
           } else { //new Asset
             this.assetObj ={
@@ -135,7 +144,8 @@
               
               alert("New asset will be created!");
               console.log("AssetComponent->createAsset request:" +JSON.stringify(this.assetObj));
-              axios.post('http://localhost:8080/api/assets/', this.assetObj)
+              this.isError = false;
+              axios.post(this.ams_backend_url + '/api/assets/', this.assetObj)
                       .then(response => {
                                           // JSON responses are automatically parsed.
                                           console.log("AssetComponent->createAsset response:" + JSON.stringify(response.data));
@@ -145,6 +155,10 @@
                                       })
                       .catch(e => {
                           this.isUpdating = false;
+                          if (e.response.status) {
+                            this.isError = true;
+                            this.requestError = e.response.status + "-" + e.response.data.error;
+                          }
                           this.errors.push(e)
                       })
             }
@@ -159,7 +173,8 @@
             alert("assetId=" + assetId + " will be updated!");
             this.isUpdating = true;
             console.log("AssetComponent->updateAsset request:" +JSON.stringify(this.assetObj));
-            axios.put('http://localhost:8080/api/assets/' + assetId, this.assetObj)
+            this.isError = false;
+            axios.put(this.ams_backend_url + '/api/assets/' + assetId, this.assetObj, this.auth)
                     .then(response => {
                                         // JSON responses are automatically parsed.
                                         console.log("AssetComponent->updateAsset response:" + JSON.stringify(response.data));
@@ -168,6 +183,10 @@
                                     })
                     .catch(e => {
                         this.isUpdating = false;
+                        if (e.response.status) {
+                          this.isError = true;
+                          this.requestError = e.response.status + "-" + e.response.data.error;
+                        }
                         this.errors.push(e)
                     })
           }

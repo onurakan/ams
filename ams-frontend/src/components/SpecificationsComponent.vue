@@ -4,6 +4,7 @@
         <div class="specifications">
             <p v-if="isLoading">Loading ...</p>
             <p v-else-if="isUpdating">Updating, please wait ...</p>
+            <p v-else-if="isError">Error occured: "{{requestError}}"</p>
             <div v-else>
                 <label>Asset# {{assetId}}</label>
             
@@ -100,6 +101,8 @@
                 specifications: [],
                 isLoading: true,
                 isUpdating: false,
+                isError: false,
+                requestError : null,
                 edit2: false,
                 edit3: false,
                 edit4: false,
@@ -122,7 +125,8 @@
                     if (element.id == specificationId) {
                         alert("specificationId=" + specificationId + " will be updated!");
                         console.log("SpecificationsComponent->updateSpecification request: " +JSON.stringify(element));
-                        axios.put('http://localhost:8080/api/specifications/' + specificationId, element)
+                        this.isError = false;
+                        axios.put(this.ams_backend_url + '/api/specifications/' + specificationId, element)
                                 .then(response => {
                                                     // JSON responses are automatically parsed.
                                                     console.log("SpecificationsComponent->updateSpecification response:" + JSON.stringify(response.data));
@@ -131,6 +135,10 @@
                                                 })
                                 .catch(e => {
                                     this.isUpdating = false;
+                                    if (e.response.status) {
+                                        this.isError = true;
+                                        this.requestError = e.response.status + "-" + e.response.data.error;
+                                    }
                                     this.errors.push(e)
                                 })
                     }
@@ -139,18 +147,26 @@
             fetchSpecifications : function (inAssetId) {
                 if (inAssetId>0) {
                     console.log("SpecificationsComponent->fetchSpecifications request for assetId=" + inAssetId)
+                    
                     this.isLoading=true;
-                        axios.get('http://localhost:8080/api/assets/' + inAssetId)
-                            .then(response => {
-                                                // JSON responses are automatically parsed.
-                                                console.log("SpecificationsComponent->fetchSpecifications response:" + JSON.stringify(response.data.specificationList));
-                                                this.specifications = response.data.specificationList
-                                                this.isLoading = false;
-                                            })
-                            .catch(e => {
+                    this.isError = false;
+                    
+                    axios.get(this.ams_backend_url + '/api/assets/' + inAssetId, this.auth)
+                        .then(response => {
+                                            // JSON responses are automatically parsed.
+                                            console.log("SpecificationsComponent->fetchSpecifications response:" + JSON.stringify(response.data.specificationList));
+                                            this.specifications = response.data.specificationList
+                                            this.isLoading = false;
+                                        })
+                        .catch(e => {
                             this.isLoading=false;
-                            this.errors.push(e)
-                            })
+
+                            if (e.response.status) {
+                                this.isError = true;
+                                this.requestError = e.response.status + "-" + e.response.data.error;
+                            }
+                            this.errors.push(e);
+                        })
                 } else {
                     this.specifications = [];
                     this.isLoading = false;

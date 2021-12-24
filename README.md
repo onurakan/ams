@@ -35,12 +35,16 @@ System consists of following container services:
     6-Restart running containers:  
       $ docker restart ams-backend_container  
     7-Print container logs:  
-      $ docker logs ams-backend_container  
+      $ docker logs ams-backend_container
+      $ docker logs ams-backend-mysql_container
     8-Connect to container os:  
       $ docker exec -ti ams-backend_container bash
       $ docker exec -ti ams-mysql-db_container bash
     9-Delete shutdown containers:  
-      $ docker system prune  
+      $ docker system prune
+## Throuble shooting:
+    1-Due to architecture change, database schema changed. You may encounter following error. Therefore before running containers delete ./ams-mysql-db folder for a fresh database.
+    Caused by: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ams_db`.`#sql-1_2`, CONSTRAINT `FKviwhygdqrp22t52tbtaenkop` FOREIGN KEY (`specification_list_id`) REFERENCES `tspecification` (`id`))
 ## Sample UI Pages:
   http://localhost/
 ## Sample Rest Requests:  
@@ -99,3 +103,4 @@ System consists of following container services:
 - http://www.java-allandsundry.com/2015/04/spring-session-demonstration-using.html
   - https://github.com/bijukunjummen/shopping-cart-cf-app
   - https://www.baeldung.com/spring-security-extra-login-fields login page, login filter, spring security
+- https://mkyong.com/maven/maven-jacoco-code-coverage-example/
