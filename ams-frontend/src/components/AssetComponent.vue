@@ -12,48 +12,48 @@
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetId">Asset Id:</label></div>
               <div class="divTableCell">
-                  <label> {{assetObj.assetId}} </label>
+                  <label> {{asset.assetId}} </label>
               </div>
             </div>
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetStatus">Asset Status:</label></div>
               <div v-if="edit3" class="divTableCell">
-                <input id="assetStatus" v-model.number="assetObj.status" type="number" @blur="$emit('update'); updateAsset(assetObj.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <input id="assetStatus" v-model.number="asset.status" type="number" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
               </div>
               <div v-else class="divTableCell">
-                  <label @click="edit3 = true;"> {{assetObj.status}} </label>
+                  <label @click="edit3 = true;"> {{asset.status}} </label>
               </div>
             </div>
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetClassification">Asset Classification:</label></div>
               <div v-if="edit4" class="divTableCell">
-                <input id="assetClassification" v-if="edit4" v-model="assetObj.classification" @blur="$emit('update'); updateAsset(assetObj.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <input id="assetClassification" v-if="edit4" v-model="asset.classification" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
               </div>
               <div v-else class="divTableCell">
-                  <label @click="edit4 = true;"> {{assetObj.classification}} </label>
+                  <label @click="edit4 = true;"> {{asset.classification}} </label>
               </div>
             </div>
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetDescription">Asset Description:</label></div>
               <div v-if="edit5" class="divTableCell">
-                <input id="assetDescription" v-if="edit5" v-model="assetObj.description" @blur="$emit('update'); updateAsset(assetObj.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <input id="assetDescription" v-if="edit5" v-model="asset.description" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
               </div>
               <div v-else class="divTableCell">
-                  <label @click="edit5 = true;"> {{assetObj.description}} </label>
+                  <label @click="edit5 = true;"> {{asset.description}} </label>
               </div>
             </div>
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetTag">Asset Tag:</label></div>
               <div v-if="edit6" class="divTableCell">
-                <input id="assetTag" v-if="edit6" v-model="assetObj.assetTag" @blur="$emit('update'); updateAsset(assetObj.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <input id="assetTag" v-if="edit6" v-model="asset.assetTag" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
               </div>
               <div v-else class="divTableCell">
-                  <label @click="edit6 = true;"> {{assetObj.assetTag}} </label>
+                  <label @click="edit6 = true;"> {{asset.assetTag}} </label>
               </div>
             </div>
           </div>
         </div>
-        <button v-if="assetObj.assetId == null" v-on:click="createAsset()" style="margin-left: -80px; margin-top: 10px;" >Create Asset</button>
+        <button v-if="asset.assetId == null" v-on:click="createAsset()" style="margin-left: -80px; margin-top: 10px;" >Create Asset</button>
       </div>
     </div>
   </div>
@@ -68,17 +68,17 @@
     props:['assetId'],
     data () {
       return {
-          assetObj: {
+          isLoading: false,
+          isUpdating: false,
+          isError: false,
+          requestError : null,
+          asset: {
             assetId: null,
             status: null,
             classification: null,
             description: null,
             assetTag: null
           },
-          isLoading: false,
-          isUpdating: false,
-          isError: false,
-          requestError : null,
           edit3: false,
           edit4: false,
           edit5: false,
@@ -101,11 +101,11 @@
             console.log("AssetComponent->fetchAsset request for assetId=" + inAssetId)
             this.isLoading=true;
             this.isError = false;
-            axios.get(this.ams_backend_url + '/api/assets/' + inAssetId, this.auth)
+            axios.get(this.ams_backend_url + '/api/asset/read/' + inAssetId, this.auth)
                 .then(response => {
                                     // JSON responses are automatically parsed.
                                     console.log("AssetComponent->fetchSpecifications response:" + JSON.stringify(response.data));
-                                    this.assetObj = response.data
+                                    this.asset = response.data
                                     this.isLoading = false;
                                   })
                 .catch(e => {
@@ -118,7 +118,7 @@
                   this.errors.push(e);
                 })
           } else { //new Asset
-            this.assetObj ={
+            this.asset ={
                             assetId: null,
                             status: null,
                             classification: null,
@@ -132,10 +132,10 @@
           }
         },
         createAsset : function () {
-          if (this.assetObj.status != null &&
-                this.assetObj.classification != null &&
-                this.assetObj.description != null &&
-                this.assetObj.assetTag != null
+          if (this.asset.status != null &&
+                this.asset.classification != null &&
+                this.asset.description != null &&
+                this.asset.assetTag != null
                 ) {
               this.edit3 = false;
               this.edit4 = false;
@@ -143,15 +143,15 @@
               this.edit6 = false;
               
               alert("New asset will be created!");
-              console.log("AssetComponent->createAsset request:" +JSON.stringify(this.assetObj));
+              console.log("AssetComponent->createAsset request:" +JSON.stringify(this.asset));
               this.isError = false;
-              axios.post(this.ams_backend_url + '/api/assets/', this.assetObj)
+              axios.post(this.ams_backend_url + '/api/asset/create', this.asset)
                       .then(response => {
                                           // JSON responses are automatically parsed.
                                           console.log("AssetComponent->createAsset response:" + JSON.stringify(response.data));
                                           this.isUpdating = false;
-                                          this.assetObj.assetId = response.data.assetId;
-                                          alert("assetId=" + this.assetObj.assetId + " is created :)");
+                                          this.asset.assetId = response.data.assetId;
+                                          alert("assetId=" + this.asset.assetId + " is created :)");
                                       })
                       .catch(e => {
                           this.isUpdating = false;
@@ -172,9 +172,9 @@
 
             alert("assetId=" + assetId + " will be updated!");
             this.isUpdating = true;
-            console.log("AssetComponent->updateAsset request:" +JSON.stringify(this.assetObj));
+            console.log("AssetComponent->updateAsset request:" +JSON.stringify(this.asset));
             this.isError = false;
-            axios.put(this.ams_backend_url + '/api/assets/' + assetId, this.assetObj, this.auth)
+            axios.put(this.ams_backend_url + '/api/asset/update/' + assetId, this.asset, this.auth)
                     .then(response => {
                                         // JSON responses are automatically parsed.
                                         console.log("AssetComponent->updateAsset response:" + JSON.stringify(response.data));

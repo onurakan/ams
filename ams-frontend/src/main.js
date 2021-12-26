@@ -13,6 +13,9 @@ app.config.globalProperties.auth = {
         }
     }
     
-app.config.globalProperties.ams_backend_url='http://localhost:8080'
+app.config.globalProperties.ams_backend_url=process.env.VUE_APP_AMS_BACKEND_URL
+app.config.globalProperties.page_size=4
+
+console.info("Vue is using AMS_BACKEND_URL=" + app.config.globalProperties.ams_backend_url);
 
 app.mount('#app')

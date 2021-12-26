@@ -1,7 +1,7 @@
 # ams  
 Asset Management System
 
-System consists of following container services:
+# System consists of following container services:
   1- ams-frontend-service
       This is the frontend of the system. It is developed with Vuejs and, running on nginx.
   2- ams-backend-service
@@ -40,6 +40,7 @@ System consists of following container services:
     8-Connect to container os:  
       $ docker exec -ti ams-backend_container bash
       $ docker exec -ti ams-mysql-db_container bash
+      $ docker exec -ti ams-frontend_container sh
     9-Delete shutdown containers:  
       $ docker system prune
 ## Throuble shooting:
@@ -104,3 +105,11 @@ System consists of following container services:
   - https://github.com/bijukunjummen/shopping-cart-cf-app
   - https://www.baeldung.com/spring-security-extra-login-fields login page, login filter, spring security
 - https://mkyong.com/maven/maven-jacoco-code-coverage-example/
+- Spring Data Example
+  https://dev.to/pavankjadda/search-data-across-multiple-columns-using-spring-data-jpa-8ed
+- Boilerplate code removal dependencies:
+  - https://mapstruct.org/
+  - https://projectlombok.org/
+  - http://hamcrest.org/
+- https://developpaper.com/question/how-to-use-docker-to-package-vue-project-to-read-docker-environment-variables/
+- https://stackoverflow.com/questions/13872273/api-pagination-best-practices

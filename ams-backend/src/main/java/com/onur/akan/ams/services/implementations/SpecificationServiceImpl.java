@@ -6,6 +6,7 @@ import com.onur.akan.ams.services.SpecificationService;
 import com.onur.akan.ams.AmsRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,9 +15,10 @@ import java.util.List;
 @Service
 @Setter
 @RequiredArgsConstructor
+@Slf4j
 public class SpecificationServiceImpl implements SpecificationService {
 
-    private SpecificationRepository specificationRepository;
+    private final SpecificationRepository specificationRepository;
 
     @Override
     public List<?> listAll() {
@@ -36,7 +38,9 @@ public class SpecificationServiceImpl implements SpecificationService {
         if (specificationEntity == null) throw new AmsRequestException("specification cannot be null");
         if (specificationEntity.getId() != null) throw new AmsRequestException("Update is not allowed");
 
-        return specificationRepository.save(specificationEntity);
+        SpecificationEntity newSpecificationEntity = specificationRepository.save(specificationEntity);
+        log.info("Created specification with id=" + newSpecificationEntity.getId());
+        return newSpecificationEntity;
     }
 
     @Override

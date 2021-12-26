@@ -4,8 +4,15 @@ import com.onur.akan.ams.AmsRequestException;
 import com.onur.akan.ams.domain.AssetEntity;
 import com.onur.akan.ams.repositories.AssetRepository;
 import com.onur.akan.ams.services.AssetService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,9 +21,15 @@ import java.util.List;
 @Service
 @Setter
 @RequiredArgsConstructor
+@Slf4j
 public class AssetServiceImpl implements AssetService {
 
     private final AssetRepository assetRepository;
+
+    @Override
+    public AssetEntity getById(Long id) {
+        return assetRepository.findById(id).get();
+    }
 
     @Override
     public List<?> listAll() {
@@ -25,9 +38,18 @@ public class AssetServiceImpl implements AssetService {
         return entities;
     }
 
+    public static ExampleMatcher CUSTOM_EXAMPLE_MATCHER = null;
+    {
+        CUSTOM_EXAMPLE_MATCHER = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase();
+    }
+
     @Override
-    public AssetEntity getById(Long id) {
-        return assetRepository.findById(id).get();
+    public Page<AssetEntity> findByExampleMatcher(AssetEntity assetEntity, @NonNull Integer currentPageNumber, @NonNull Integer pageSize) {
+
+        Example<AssetEntity> assetExample = Example.of(assetEntity, CUSTOM_EXAMPLE_MATCHER);
+
+        //return assetRepository.findAll(assetExample);
+        return assetRepository.findAll(assetExample, PageRequest.of(currentPageNumber - 1, pageSize, Sort.by("id").ascending()));
     }
 
     @Override
@@ -36,7 +58,9 @@ public class AssetServiceImpl implements AssetService {
         if (assetEntity == null) throw new AmsRequestException("asset cannot be null");
         if (assetEntity.getId() != null) throw new AmsRequestException("Update is not allowed");
 
-        return assetRepository.save(assetEntity);
+        AssetEntity newAssetEntity = assetRepository.save(assetEntity);
+        log.info("Created asset with id=" + newAssetEntity.getId());
+        return newAssetEntity;
     }
 
     @Override

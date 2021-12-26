@@ -2,6 +2,7 @@ package com.onur.akan.ams.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import lombok.ToString;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,6 +29,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 @Builder
 public class AssetEntity {
 
@@ -41,6 +44,6 @@ public class AssetEntity {
     private String description;
     @Column(name = "vasset_tag")
     private String assetTag;
-    @OneToMany( targetEntity= SpecificationEntity.class, cascade = CascadeType.ALL)
+    @OneToMany( targetEntity= SpecificationEntity.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SpecificationEntity> specificationList;
 }

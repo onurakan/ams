@@ -2,6 +2,7 @@ package com.onur.akan.ams.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 @Builder
 public class SpecificationEntity {
     @Id
@@ -36,7 +38,7 @@ public class SpecificationEntity {
     @Column(name = "vdataType")
     private String dataType;
     @Column(name = "valphnumericValue")
-    private String alphnumericValue;
+    private String alphanumericValue;
     @Column(name = "valphanumericDescription")
     private String alphanumericDescription;
     @Column(name = "vnumericValue")

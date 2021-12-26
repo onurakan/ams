@@ -1,9 +1,10 @@
 package com.onur.akan.ams.controllers;
 
-import com.onur.akan.ams.controllers.model.ModelMapper;
 import com.onur.akan.ams.controllers.model.Specification;
+import com.onur.akan.ams.controllers.model.SpecificationMapper;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.services.SpecificationService;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RequestMapping("/api")
@@ -26,15 +28,16 @@ import java.util.stream.Collectors;
 @Setter
 @CrossOrigin(origins = "http://localhost:8081") //TODO onur
 @Slf4j
+@RequiredArgsConstructor
 public class SpecificationController {
 
-    private SpecificationService specificationService;
+    private final SpecificationService specificationService;
 
-    @GetMapping("/specifications")
-    public ResponseEntity<List<Specification>> listAssets() {
+    @GetMapping("/specification/read")
+    public ResponseEntity<List<Specification>> readSpecifications() {
         try {
             List<Specification> specifications = specificationService.listAll().stream()
-                                                                                .map(se -> ModelMapper.toSpecification((SpecificationEntity) se))
+                                                                                .map(se -> SpecificationMapper.INSTANCE.specificationEntityToSpecification((SpecificationEntity) se))
                                                                                 .collect(Collectors.toList());
             
             return new ResponseEntity<>(specifications, HttpStatus.OK);
@@ -44,37 +47,35 @@ public class SpecificationController {
         }
     }
 
-    @GetMapping("/specifications/{id}")
+    @GetMapping("/specification/read/{id}")
     public ResponseEntity<Specification>  getSpecificationById(@PathVariable Long id) {
         try {
-            SpecificationEntity SpecificationEntity = specificationService.getById(id);
-            if (SpecificationEntity != null) {
-                return new ResponseEntity<>(ModelMapper.toSpecification(SpecificationEntity), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            SpecificationEntity specificationEntity = specificationService.getById(id);
+            return new ResponseEntity<>(SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity), HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("", e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/specifications")
+    @PostMapping("/specification/create")
     public ResponseEntity<Specification> createSpecification(@RequestBody Specification specification) {
 
         try {
-            SpecificationEntity newSpecificationEntity = specificationService.save(ModelMapper.toSpecificationEntity(specification));
-            return new ResponseEntity<>(ModelMapper.toSpecification(newSpecificationEntity), HttpStatus.CREATED);
+            SpecificationEntity newSpecificationEntity = specificationService.save(SpecificationMapper.INSTANCE.specificationToSpecificationEntity(specification));
+            return new ResponseEntity<>(SpecificationMapper.INSTANCE.specificationEntityToSpecification(newSpecificationEntity), HttpStatus.CREATED);
         } catch (Exception e) {
             log.error("", e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PutMapping(value = "/specifications/{id}")
+    @PutMapping(value = "/specification/update/{id}")
     public ResponseEntity<Long> updateSpecification(@RequestBody Specification specification) {
         try {
-            SpecificationEntity updatedSpecificationEntity = specificationService.update(ModelMapper.toSpecificationEntity(specification));
+            SpecificationEntity updatedSpecificationEntity = specificationService.update(SpecificationMapper.INSTANCE.specificationToSpecificationEntity(specification));
             if (updatedSpecificationEntity != null) {
                 return new ResponseEntity<>(updatedSpecificationEntity.getId(), HttpStatus.CREATED);
             } else {
@@ -86,7 +87,7 @@ public class SpecificationController {
         }
     }
 
-    @DeleteMapping("/specifications/{id}")
+    @DeleteMapping("/specification/delete{id}")
     public ResponseEntity<SpecificationEntity> delete(@PathVariable Long id) {
         try {
             SpecificationEntity SpecificationEntity = specificationService.getById(id);

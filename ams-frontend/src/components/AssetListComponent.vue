@@ -16,19 +16,30 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input ref="assetId" placeholder="Asset Id" @blur="filterAssets()" @keyup.enter="filterAssets()" /></td>
-                        <td><input ref="assetStatus" placeholder="Status" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
-                        <td><input ref="assetClassification" placeholder="Classification" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
-                        <td><input ref="assetDescription" placeholder="Description" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
+                        <td><input v-model="asset.assetId" placeholder="Asset Id" @blur="filterAssets()" @keyup.enter="filterAssets()" /></td>
+                        <td><input v-model="asset.status" placeholder="Status" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
+                        <td><input v-model="asset.classification" placeholder="Classification" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
+                        <td><input v-model="asset.description" placeholder="Description" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
+                        <td><input v-model="asset.assetTag" placeholder="Tag" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
                     </tr>
                     <tr v-for="asset in filteredAssets" :key="asset.id">
                         <td><a href="javascript:void(0);" v-on:click="currentAssetId">{{ asset.assetId }}</a></td>
                         <td>{{ asset.status }}</td>
                         <td>{{ asset.classification }}</td>
                         <td>{{ asset.description }}</td>
+                        <td>{{ asset.assetTag }}</td>
                     </tr>
                 </tbody>
             </table>
+
+            <div v-if="page.previous || page.next" class="divTable" style="width: 20%; margin: 0 auto;" >
+                <div class="divTableBody">
+                    <div class="divTableRow">
+                        <div class="divTableCell"><a v-if="page.previous" href="javascript:void(0);" v-on:click="openPage(page.previous)">Previous Assets</a></div>
+                        <div class="divTableCell"><a v-if="page.next"     href="javascript:void(0);" v-on:click="openPage(page.next)">Next Assets</a></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -39,13 +50,19 @@
         props: [],
         data() {
             return {
-                assets: [],
-                filteredAssets: [],
-                errors: [],
-                assetId: 1,
                 isLoading: false,
                 isError: false,
-                requestError : null
+                requestError : null,
+                filteredAssets: [],
+                errors: [],
+                page: {previous: null, next: null},
+                asset: {
+                    assetId: null,
+                    status: null,
+                    classification: null,
+                    description: null,
+                    assetTag: null
+                }
             }
         },
 
@@ -54,40 +71,41 @@
                     console.log("AssetListComponent->currentAssetId:" + event.target.innerHTML)
                     this.$emit('assetId-clicked', event.target.innerHTML);
                 },
-                filterAssets: function () { 
-                    if (!this.assets.length) {
+                openPage: function (filterUrl) {
+                    this.asset = JSON.parse(JSON.stringify(this.asset, function (i, val) { return val === "" ? null : val;}));
+
+                    axios.post(filterUrl, this.asset)
+                      .then(response => {
+                                // JSON responses are automatically parsed.
+                                console.log("AssetListComponent->filterAssets response:" + JSON.stringify(response.data));
+                                this.isLoading = false;
+                                this.filteredAssets = response.data.data;
+                                this.page.previous = null;
+                                this.page.next = null;
+                                if (response.data.previousPage) this.page.previous = this.ams_backend_url + response.data.previousPage;
+                                if (response.data.nextPage)     this.page.next = this.ams_backend_url + response.data.nextPage;
+                            })
+                      .catch(e => {
+                          this.isLoading = false;
+                          if (e.response.status) {
+                            this.isError = true;
+                            this.requestError = e.response.status + "-" + e.response.data.error;
+                          }
+                          this.errors.push(e)
+                      })
+                },
+                filterAssets: async function () { 
+                    if (!this.filteredAssets.length) {
                         return []
                     }
-                
-                    this.filteredAssets = this.assets.filter(item => {
-                        var matchAssetId = (this.$refs.assetId.value == '' || this.$refs.assetId.value == item.assetId);
-                        var matchAssetStatus = (this.$refs.assetStatus.value == '' || this.$refs.assetStatus.value == item.status);
-                        var matchAssetClassification = (this.$refs.assetClassification.value == '' || this.$refs.assetClassification.value == item.classification);
-                        var matchAssetDescription = (this.$refs.assetDescription.value == '' || this.$refs.assetDescription.value == item.description);
 
-                        return matchAssetId && matchAssetStatus && matchAssetClassification && matchAssetDescription;
-                    });
+                    this.openPage(this.ams_backend_url + '/api/asset/read/filter/1/' + this.page_size);
                 }
         },
         created() {
             this.isLoading = true;
             this.isError = false;
-            axios.get(this.ams_backend_url + '/api/assets', this.auth)
-                .then(response => {
-                        // JSON responses are automatically parsed.
-                        this.assets = response.data
-                        this.filteredAssets = this.assets
-                        this.isLoading = false;
-                    })
-                .catch(e => {
-                    this.isLoading = false;
-
-                    if (e.response.status) {
-                        this.isError = true;
-                        this.requestError = e.response.status + "-" + e.response.data.error;
-                    }
-                    this.errors.push(e);
-                })
+            this.openPage(this.ams_backend_url + '/api/asset/read/filter/1/' + this.page_size);
         }
      };
 </script>
@@ -107,5 +125,37 @@
 
     :-ms-input-placeholder {  
     text-align: center; 
+    }
+
+
+
+    .divTable{
+        display: table;
+        width: 100%;
+    }
+    .divTableRow {
+        display: table-row;
+    }
+    .divTableHeading {
+        background-color: #EEE;
+        display: table-header-group;
+    }
+    .divTableCell, .divTableHead {
+        border: 0px solid #999999;
+        display: table-cell;
+        padding: 3px 10px;
+    }
+    .divTableHeading {
+        background-color: #EEE;
+        display: table-header-group;
+        font-weight: bold;
+    }
+    .divTableFoot {
+        background-color: #EEE;
+        display: table-footer-group;
+        font-weight: bold;
+    }
+    .divTableBody {
+        display: table-row-group;
     }
 </style>

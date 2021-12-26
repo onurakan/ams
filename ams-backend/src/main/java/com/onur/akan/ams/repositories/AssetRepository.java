@@ -1,12 +1,10 @@
 package com.onur.akan.ams.repositories;
 
 import com.onur.akan.ams.domain.AssetEntity;
-import org.springframework.data.repository.CrudRepository;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * @Author Onur Akan
  */
-public interface AssetRepository extends CrudRepository<AssetEntity, Long> {
+public interface AssetRepository extends JpaRepository<AssetEntity, Long> {
 }

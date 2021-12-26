@@ -126,7 +126,7 @@
                         alert("specificationId=" + specificationId + " will be updated!");
                         console.log("SpecificationsComponent->updateSpecification request: " +JSON.stringify(element));
                         this.isError = false;
-                        axios.put(this.ams_backend_url + '/api/specifications/' + specificationId, element)
+                        axios.put(this.ams_backend_url + '/api/specification/read/' + specificationId, element)
                                 .then(response => {
                                                     // JSON responses are automatically parsed.
                                                     console.log("SpecificationsComponent->updateSpecification response:" + JSON.stringify(response.data));
@@ -151,7 +151,7 @@
                     this.isLoading=true;
                     this.isError = false;
                     
-                    axios.get(this.ams_backend_url + '/api/assets/' + inAssetId, this.auth)
+                    axios.get(this.ams_backend_url + '/api/asset/read/' + inAssetId, this.auth)
                         .then(response => {
                                             // JSON responses are automatically parsed.
                                             console.log("SpecificationsComponent->fetchSpecifications response:" + JSON.stringify(response.data.specificationList));
