@@ -38,17 +38,13 @@ public class AssetServiceImpl implements AssetService {
         return entities;
     }
 
-    public static ExampleMatcher CUSTOM_EXAMPLE_MATCHER = null;
-    {
-        CUSTOM_EXAMPLE_MATCHER = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase();
-    }
+    public static ExampleMatcher CUSTOM_EXAMPLE_MATCHER = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase();
 
     @Override
     public Page<AssetEntity> findByExampleMatcher(AssetEntity assetEntity, @NonNull Integer currentPageNumber, @NonNull Integer pageSize) {
 
         Example<AssetEntity> assetExample = Example.of(assetEntity, CUSTOM_EXAMPLE_MATCHER);
 
-        //return assetRepository.findAll(assetExample);
         return assetRepository.findAll(assetExample, PageRequest.of(currentPageNumber - 1, pageSize, Sort.by("id").ascending()));
     }
 

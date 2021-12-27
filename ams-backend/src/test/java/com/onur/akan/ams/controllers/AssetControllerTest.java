@@ -95,6 +95,28 @@ public class AssetControllerTest {
                         .append(String.format(an_Asset, "4")).append("]").toString()));//;
     }
 
+    /**
+     {
+         "assetId" : null,
+         "status"  : 0,
+         "classification" : "NEW",
+         "description" : "New Asseet Creation",
+         "assetTag": "new assetTag",
+         "specificationList" : [
+             {
+                 "attribute" : "new_attribute",
+                 "attributeDescription" : "new_attribute_description",
+                 "dataType" : "new_dataType",
+                 "alphanumericValue" : "new_aplhanumericValue",
+                 "alphanumericDescription" : "new_alphanumeric_description",
+                 "numericValue" : "new_numericValue",
+                 "numericDescription" : "new_numericDescription",
+                 "unitOfMeasure" : "new_unitOfMeasue",
+                 "tableValue" : "new_tableValue"
+             }
+         ]
+     }
+     */
     @Test
     public void should_read_asset_by_filter() throws Exception {
         List<SpecificationEntity> in_specificationEntities = Arrays.asList(SpecificationEntity.builder().attribute("AN_ATTR").attributeDescription("AN_ATTR_DESC").dataType("A_DT").alphanumericValue("A_NV").alphanumericDescription("A_AD").numericValue("A_NV").numericDescription("A_ND").unitOfMeasure("A_UD").tableValue("A_TV").build());
@@ -103,18 +125,18 @@ public class AssetControllerTest {
         AssetEntity out_assetEntity = AssetEntity.builder().id(1L).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(out_specificationEntities).build();
 
 
-        when(assetRepository.findAll(Example.of(in_assetEntity, AssetServiceImpl.CUSTOM_EXAMPLE_MATCHER), PageRequest.of(1, 100, Sort.by("id").descending()))).thenReturn(new PageImpl(Arrays.asList(out_assetEntity)));
+        when(assetRepository.findAll(Example.of(in_assetEntity, AssetServiceImpl.CUSTOM_EXAMPLE_MATCHER), PageRequest.of(0, 100, Sort.by("id").ascending()))).thenReturn(new PageImpl(Arrays.asList(out_assetEntity)));
 
         String inAsset = "{\"assetId\":null,\"status\":0,\"classification\":\"NEW\",\"description\":\"New Asset Creation\",\"assetTag\":\"A_TAG\",\"specificationList\":[" +
                 "{\"id\":null,\"attribute\":\"AN_ATTR\",\"attributeDescription\":\"AN_ATTR_DESC\",\"dataType\":\"A_DT\",\"alphanumericValue\":\"A_NV\",\"alphanumericDescription\":\"A_AD\",\"numericValue\":\"A_NV\",\"numericDescription\":\"A_ND\",\"unitOfMeasure\":\"A_UD\",\"tableValue\":\"A_TV\"}" +
                 "]}";
-        String assetTemplate = "[{\"assetId\":%s,\"status\":0,\"classification\":\"NEW\",\"description\":\"New Asset Creation\",\"assetTag\":\"A_TAG\",\"specificationList\":[" +
+        String assetTemplate = "{\"data\":[{\"assetId\":%s,\"status\":0,\"classification\":\"NEW\",\"description\":\"New Asset Creation\",\"assetTag\":\"A_TAG\",\"specificationList\":[" +
                 "{\"id\":%s,\"attribute\":\"AN_ATTR\",\"attributeDescription\":\"AN_ATTR_DESC\",\"dataType\":\"A_DT\",\"alphanumericValue\":\"A_NV\",\"alphanumericDescription\":\"A_AD\",\"numericValue\":\"A_NV\",\"numericDescription\":\"A_ND\",\"unitOfMeasure\":\"A_UD\",\"tableValue\":\"A_TV\"}" +
-                "]}]";
+                "]}],\"previousPage\":null,\"nextPage\":null}";
 
         String outAsset = String.format(assetTemplate, 1, 2);
 
-        mockMvc.perform(post("/api/asset/read/filter").param("currentPageNumber", "1").param("pageSize", "100").contentType(MediaType.APPLICATION_JSON).content(inAsset))
+        mockMvc.perform(post("/api/asset/read/filter/1/100").contentType(MediaType.APPLICATION_JSON).content(inAsset))
                 .andExpect(status().isOk())
                 .andExpect(content().json(outAsset));
     }
@@ -186,6 +208,4 @@ public class AssetControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().json(outAsset));
     }
-
-
 }

@@ -57,6 +57,9 @@ public class AssetController {
 
         try {
             org.springframework.data.domain.Page<AssetEntity> assetEntityPage = assetService.findByExampleMatcher(AssetMapper.INSTANCE.assetToAssetEntity(asset), currentPageNumber, pageSize);
+
+            if (assetEntityPage == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
             List<Asset> assets = assetEntityPage.getContent().stream()
                                                 .map(ae -> AssetMapper.INSTANCE.assetEntityToAsset((AssetEntity) ae))
                                                 .collect(Collectors.toList());

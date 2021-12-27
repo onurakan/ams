@@ -44,15 +44,18 @@ Asset Management System
     9-Delete shutdown containers:  
       $ docker system prune
 ## Throuble shooting:
-    1-Due to architecture change, database schema changed. You may encounter following error. Therefore before running containers delete ./ams-mysql-db folder for a fresh database.
+    1- Due to architecture change, database schema changed. You may encounter following error. Therefore before running containers delete ./ams-mysql-db folder for a fresh database.
     Caused by: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ams_db`.`#sql-1_2`, CONSTRAINT `FKviwhygdqrp22t52tbtaenkop` FOREIGN KEY (`specification_list_id`) REFERENCES `tspecification` (`id`))
+    2- If you cant build project with intellij, enable annotation processor with classpath. Clean project (delete target). Then retry compile.
+    https://stackoverflow.com/questions/29980133/intellij-idea-cannot-see-lombok-generated-code
 ## Sample UI Pages:
   http://localhost/
 ## Sample Rest Requests:  
-- GET http://localhost:8080/api/assets/  
-- GET http://localhost:8080/api/assets/1  
-- GET http://localhost:8080/api/specifications/2  
-- POST http://localhost:8080/api/assets  
+- GET http://localhost:8080/api/asset/read  
+- GET http://localhost:8080/api/asset/read/1  
+- GET http://localhost:8080/api/specification/read/2  
+- POST http://localhost:8080/api/asset/read/filter/1/20  
+- POST http://localhost:8080/api/asset/read
     {  
           "assetId": 15,  
           "status": 0,  
@@ -74,7 +77,7 @@ Asset Management System
               }  
           ]  
       }  
-- PUT http://localhost:8080/api/assets/1  
+- PUT http://localhost:8080/api/asset/read/1  
       {  
         "assetId": 1,  
         "status": 2,  
@@ -96,7 +99,7 @@ Asset Management System
             }  
         ]  
     }  
-- DELETE http://localhost:8080/api/assets/3  
+- DELETE http://localhost:8080/api/asset/delete/3  
 
 
 ### Ams Project References:

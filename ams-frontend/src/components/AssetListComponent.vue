@@ -12,6 +12,7 @@
                     <th>Status</th>
                     <th>Classification</th>
                     <th>Description</th>
+                    <th>Tag</th>
                 </tr>
                 </thead>
                 <tbody>
