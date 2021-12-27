@@ -106,13 +106,15 @@ Asset Management System
 - https://dzone.com/articles/spring-session-demonstration
 - http://www.java-allandsundry.com/2015/04/spring-session-demonstration-using.html
   - https://github.com/bijukunjummen/shopping-cart-cf-app
-  - https://www.baeldung.com/spring-security-extra-login-fields login page, login filter, spring security
+  - https://www.baeldung.com/spring-security-extra-login-fields   login page, login filter, spring security
 - https://mkyong.com/maven/maven-jacoco-code-coverage-example/
-- Spring Data Example
-  https://dev.to/pavankjadda/search-data-across-multiple-columns-using-spring-data-jpa-8ed
+- https://dev.to/pavankjadda/search-data-across-multiple-columns-using-spring-data-jpa-8ed  Spring Data Example
+- https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
+  https://www.youtube.com/watch?v=WPMQdnwPJLc&feature=youtu.be
 - Boilerplate code removal dependencies:
   - https://mapstruct.org/
   - https://projectlombok.org/
   - http://hamcrest.org/
+  - https://github.com/google/gson
 - https://developpaper.com/question/how-to-use-docker-to-package-vue-project-to-read-docker-environment-variables/
 - https://stackoverflow.com/questions/13872273/api-pagination-best-practices
