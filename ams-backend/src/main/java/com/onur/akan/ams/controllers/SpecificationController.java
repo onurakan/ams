@@ -34,7 +34,7 @@ public class SpecificationController {
     private final SpecificationService specificationService;
 
     @GetMapping("/specification")
-    public ResponseEntity<List<Specification>> readSpecifications(@RequestParam Long assetId) {
+    public ResponseEntity<List<Specification>> readSpecifications(@RequestParam(required = false) Long assetId) {
 
         List<Specification> specifications = null;
         if (assetId == null) {

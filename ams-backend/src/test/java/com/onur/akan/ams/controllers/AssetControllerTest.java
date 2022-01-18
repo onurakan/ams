@@ -1,10 +1,9 @@
 package com.onur.akan.ams.controllers;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.onur.akan.ams.AmsApplication;
-import com.onur.akan.ams.controllers.model.Asset;
 import com.onur.akan.ams.controllers.model.AssetMapper;
 import com.onur.akan.ams.domain.AssetEntity;
 import com.onur.akan.ams.domain.SpecificationEntity;
@@ -44,7 +43,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.google.gson.Gson;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
