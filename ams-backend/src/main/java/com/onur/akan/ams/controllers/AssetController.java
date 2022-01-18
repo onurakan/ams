@@ -71,7 +71,7 @@ public class AssetController {
     @PostMapping("/asset")
     public ResponseEntity<Asset> createAsset(@RequestBody Asset asset) throws AmsRequestException {
         AssetEntity newAssetEntity = assetService.save(AssetMapper.INSTANCE.assetToAssetEntity(asset));
-        Asset newAsset = AssetMapper.INSTANCE.assetEntityToAssetIgnoreSpecificationList(newAssetEntity);
+        Asset newAsset = AssetMapper.INSTANCE.assetEntityToAsset(newAssetEntity);
 
         return ResponseEntity.created(URI.create("/asset/"+newAssetEntity.getId())).body(newAsset);
     }

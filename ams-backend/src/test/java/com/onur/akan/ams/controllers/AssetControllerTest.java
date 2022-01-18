@@ -134,11 +134,8 @@ public class AssetControllerTest {
      */
     @Test
     public void should_read_asset_by_filter() throws Exception {
-        List<SpecificationEntity> in_specificationEntities = Arrays.asList(SpecificationEntity.builder().attribute("AN_ATTR").attributeDescription("AN_ATTR_DESC").dataType("A_DT").alphanumericValue("A_NV").alphanumericDescription("A_AD").numericValue("A_NV").numericDescription("A_ND").unitOfMeasure("A_UD").tableValue("A_TV").build());
-        AssetEntity in_assetEntity = AssetEntity.builder().status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(in_specificationEntities).build();
-
-        List<SpecificationEntity> out_specificationEntities = Arrays.asList(SpecificationEntity.builder().id(2L).attribute("AN_ATTR").attributeDescription("AN_ATTR_DESC").dataType("A_DT").alphanumericValue("A_NV").alphanumericDescription("A_AD").numericValue("A_NV").numericDescription("A_ND").unitOfMeasure("A_UD").tableValue("A_TV").build());
-        AssetEntity out_assetEntity = AssetEntity.builder().id(1L).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(out_specificationEntities).build();
+        AssetEntity in_assetEntity = AssetEntity.builder().status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
+        AssetEntity out_assetEntity = AssetEntity.builder().id(1L).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
 
         when(assetRepository.findAll(Example.of(in_assetEntity, AssetServiceImpl.CUSTOM_EXAMPLE_MATCHER), PageRequest.of(0, 100, Sort.by("id").ascending()))).thenReturn(new PageImpl(Arrays.asList(out_assetEntity)));
 
