@@ -81,7 +81,7 @@ public class AssetControllerTest {
     public void should_read_asset_non() throws Exception {
         when(assetRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
 
-        this.mockMvc.perform(get("/api/asset/read/1")).andDo(print()).andExpect(status().isNotFound());
+        this.mockMvc.perform(get("/api/asset/1")).andDo(print()).andExpect(status().isNotFound());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class AssetControllerTest {
         AssetEntity assetEntity  = AssetEntity.builder().id(1L).build();
         when(assetRepository.findById(1L)).thenReturn(Optional.of(assetEntity));
 
-        this.mockMvc.perform(get("/api/asset/read/1")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/api/asset/1")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(assetEntity))));
     }
 
@@ -106,7 +106,7 @@ public class AssetControllerTest {
                                                     AssetMapper.INSTANCE.assetEntityToAsset(assetEntity3),
                                                     AssetMapper.INSTANCE.assetEntityToAsset(assetEntity4)));
 
-        this.mockMvc.perform(get("/api/asset/read")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/api/asset")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(out_asset));
     }
 
@@ -147,7 +147,7 @@ public class AssetControllerTest {
         jsonObject.add("previousPage", null);
         jsonObject.add("nextPage", null);
 
-        mockMvc.perform(post("/api/asset/read/filter/1/100").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
+        mockMvc.perform(post("/api/asset/1/100").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
                 .andExpect(status().isOk())
                 .andExpect(content().json(gson.toJson(jsonObject)));
     }
@@ -169,7 +169,7 @@ public class AssetControllerTest {
         AssetEntity out_assetEntity = AssetEntity.builder().id(1L).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
         when(assetRepository.save(in_assetEntity)).thenReturn(out_assetEntity);
 
-        mockMvc.perform(post("/api/asset/create").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
+        mockMvc.perform(post("/api/asset").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(out_assetEntity))));
     }
@@ -203,9 +203,9 @@ public class AssetControllerTest {
         AssetEntity in_assetEntity = AssetEntity.builder().status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(in_specificationEntities).build();
         AssetEntity out_assetEntity = AssetEntity.builder().id(1L).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(out_specificationEntities).build();
         when(assetRepository.save(in_assetEntity)).thenReturn(out_assetEntity);
-        
 
-        mockMvc.perform(post("/api/asset/create").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
+
+        mockMvc.perform(post("/api/asset").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(out_assetEntity))));
     }

@@ -1,6 +1,6 @@
 package com.onur.akan.ams.services;
 
-import com.onur.akan.ams.AmsRequestException;
+import com.onur.akan.ams.controllers.exception.AmsRequestException;
 
 import java.util.List;
 

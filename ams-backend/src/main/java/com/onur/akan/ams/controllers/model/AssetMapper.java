@@ -22,4 +22,10 @@ public interface AssetMapper {
             @Mapping(target="specificationList", source="assetEntity.specificationList")
     })
     Asset assetEntityToAsset(AssetEntity assetEntity);
+
+    @Mappings({
+            @Mapping(target="assetId", source="assetEntity.id"),
+            @Mapping(target="specificationList", source="assetEntity.specificationList", ignore = true)
+    })
+    Asset assetEntityToAssetIgnoreSpecificationList(AssetEntity assetEntity);
 }

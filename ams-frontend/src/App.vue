@@ -1,27 +1,27 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">    
-    <div class="assetDetail" v-if="assetId">
+    <div class="assetForm" v-if="assetId">
       <a href="javascript:void(0);" v-on:click="closeAsset">Close Asset</a>
-      <tab-component :tabAssetId="assetId"/>
+      <asset-component :assetId="assetId"/>
     </div>
     <div v-else>
       <a href="javascript:void(0);" v-on:click="openNewAsset">New Asset</a>
-      <asset-list-component @assetId-clicked="setParentAssetId"/>
+      <asset-table-component @assetId-clicked="passAssetId"/>
     </div>
   </div>
 </template>
 
 <script>
-  import AssetListComponent from './components/AssetListComponent.vue'
-  import TabComponent from './components/TabComponent.vue'
+  import AssetTableComponent from './components/table/AssetTableComponent.vue'
+  import AssetComponent from './components/AssetComponent.vue'
 
   export default {
     name: 'App',
     el: '#app',
     components: {
-      AssetListComponent,
-      TabComponent,
+      AssetTableComponent,
+      AssetComponent,
     },
     data () {
       return {
@@ -31,8 +31,8 @@
     created() {
     },
     methods: {
-      setParentAssetId: function (assetId) {
-        console.log("App->"+'setParentAssetId: Changed parentAssetId='+assetId);
+      passAssetId: function (assetId) {
+        console.log("App->"+'passAssetId: '+assetId);
         this.assetId = assetId;
       },
       closeAsset: function () {

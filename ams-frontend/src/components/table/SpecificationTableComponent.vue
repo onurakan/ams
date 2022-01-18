@@ -15,7 +15,7 @@
                         <th>attribute</th>
                         <th>attributeDescription</th>
                         <th>dataType</th>
-                        <th>alphnumericValue</th>
+                        <th>alphanumericValue</th>
                         <th>alphanumericDescription</th>
                         <th>numericValue</th>
                         <th>numericDescription</th>
@@ -25,9 +25,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="specification in specifications" :key="specification.id">
-                            <td>
-                                <label> {{specification.id}} </label>
-                            </td>
+                            <td><a href="javascript:void(0);" v-on:click="currentSpecificationId">{{ specification.id }}</a></td>
                             <td>
                                 <input v-if="edit2" v-model="specification.attribute" @blur="edit2 = false; $emit('update'); updateSpecification(specification.id)" @keyup.enter="edit2=false; $emit('update')" v-focus>
                                 <div v-else>
@@ -49,7 +47,7 @@
                             <td>
                                 <input v-if="edit5" v-model="specification.alphnumericValue" @blur="edit5 = false; $emit('update'); updateSpecification(specification.id)" @keyup.enter="edit5=false; $emit('update')" v-focus>
                                 <div v-else>
-                                    <label @click="edit5 = true;"> {{specification.alphnumericValue}} </label>
+                                    <label @click="edit5 = true;"> {{specification.alphanumericValue}} </label>
                                 </div>
                             </td>
                             <td>
@@ -94,7 +92,7 @@
     import axios from 'axios';
 
     export default {
-        name: 'SpecificationsComponent',
+        name: 'SpecificationTableComponent',
         props:['assetId'],
         data () {
             return {
@@ -117,19 +115,30 @@
         created() {
             this.fetchSpecifications(this.assetId);
         },
+        watch: { 
+            assetId: function(newVal, oldVal) { // watch it
+                alert("Aha:"+ newVal);
+                console.log('SpecificationTableComponent->Watch assetId: ', newVal, ' | was: ', oldVal);
+                this.fetchSpecifications(newVal);
+            }
+        },
         methods: {
+            currentSpecificationId: function (event) {
+                    console.log("SpecificationTableComponent->currentSpecificationId:" + event.target.innerHTML)
+                    this.$emit('specificationId-clicked', event.target.innerHTML);
+                },
             updateSpecification : function (specificationId) {
                 this.isUpdating = true;
                 
                 this.specifications.forEach(element => {
                     if (element.id == specificationId) {
                         alert("specificationId=" + specificationId + " will be updated!");
-                        console.log("SpecificationsComponent->updateSpecification request: " +JSON.stringify(element));
+                        console.log("SpecificationTableComponent->updateSpecification request: " +JSON.stringify(element));
                         this.isError = false;
-                        axios.put(this.ams_backend_url + '/api/specification/read/' + specificationId, element)
+                        axios.put(this.ams_backend_url + '/api/specification/' + specificationId, element)
                                 .then(response => {
                                                     // JSON responses are automatically parsed.
-                                                    console.log("SpecificationsComponent->updateSpecification response:" + JSON.stringify(response.data));
+                                                    console.log("SpecificationTableComponent->updateSpecification response:" + JSON.stringify(response.data));
                                                     this.isUpdating = false;
                                                     alert("specificationId=" + specificationId + " is updated :)");
                                                 })
@@ -137,7 +146,7 @@
                                     this.isUpdating = false;
                                     if (e.response.status) {
                                         this.isError = true;
-                                        this.requestError = e.response.status + "-" + e.response.data.error;
+                                        this.requestError = e.response.status + "-" + e.response.data.errorMessage;
                                     }
                                     this.errors.push(e)
                                 })
@@ -146,16 +155,16 @@
             },
             fetchSpecifications : function (inAssetId) {
                 if (inAssetId>0) {
-                    console.log("SpecificationsComponent->fetchSpecifications request for assetId=" + inAssetId)
+                    console.log("SpecificationTableComponent->fetchSpecifications request for assetId=" + inAssetId)
                     
                     this.isLoading=true;
                     this.isError = false;
                     
-                    axios.get(this.ams_backend_url + '/api/asset/read/' + inAssetId, this.auth)
+                    axios.get(this.ams_backend_url + '/api/specification?assetId=' + inAssetId, this.auth)
                         .then(response => {
                                             // JSON responses are automatically parsed.
-                                            console.log("SpecificationsComponent->fetchSpecifications response:" + JSON.stringify(response.data.specificationList));
-                                            this.specifications = response.data.specificationList
+                                            console.log("SpecificationTableComponent->fetchSpecifications response:" + JSON.stringify(response.data));
+                                            this.specifications = response.data
                                             this.isLoading = false;
                                         })
                         .catch(e => {
@@ -163,7 +172,7 @@
 
                             if (e.response.status) {
                                 this.isError = true;
-                                this.requestError = e.response.status + "-" + e.response.data.error;
+                                this.requestError = e.response.status + "-" + e.response.data.errorMessage;
                             }
                             this.errors.push(e);
                         })

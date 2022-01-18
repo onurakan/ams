@@ -51,11 +51,12 @@ Asset Management System
 ## Sample UI Pages:
   http://localhost/
 ## Sample Rest Requests:  
-- GET http://localhost:8080/api/asset/read  
-- GET http://localhost:8080/api/asset/read/1  
-- GET http://localhost:8080/api/specification/read/2  
-- POST http://localhost:8080/api/asset/read/filter/1/20  
-- POST http://localhost:8080/api/asset/read
+- GET http://localhost:8080/api/asset  
+- GET http://localhost:8080/api/asset/1  
+- GET http://localhost:8080/api/specification/2  
+- POST http://localhost:8080/api/asset/1/20  
+- POST http://localhost:8080/api/asset
+```
     {  
           "assetId": 15,  
           "status": 0,  
@@ -76,8 +77,10 @@ Asset Management System
                   "tableValue": "new_tableValue"  
               }  
           ]  
-      }  
-- PUT http://localhost:8080/api/asset/read/1  
+      }
+```
+- PUT http://localhost:8080/api/asset/1
+```
       {  
         "assetId": 1,  
         "status": 2,  
@@ -98,8 +101,9 @@ Asset Management System
                 "tableValue": "new_tableValue9"  
             }  
         ]  
-    }  
-- DELETE http://localhost:8080/api/asset/delete/3  
+    }
+```
+- DELETE http://localhost:8080/api/asset/3  
 
 
 ### Ams Project References:
@@ -118,3 +122,12 @@ Asset Management System
   - https://github.com/google/gson
 - https://developpaper.com/question/how-to-use-docker-to-package-vue-project-to-read-docker-environment-variables/
 - https://stackoverflow.com/questions/13872273/api-pagination-best-practices
+- https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
+- Udemy Cources:
+  - https://github.com/springframeworkguru/spring-core-spring-mvc/tree/bootstrap-data
+  - https://github.com/in28minutes/jpa-with-hibernate
+    - https://www.springboottutorial.com/
+- Rest Api RMM compliance
+  - https://restfulapi.net/richardson-maturity-model/
+- https://reflectoring.io/spring-boot-exception-handling/#controlleradvice
+

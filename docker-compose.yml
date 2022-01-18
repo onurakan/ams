@@ -40,11 +40,19 @@ services:
 #    ports:
 #      - "8082:8080"
   
-#  ams-session-store-redis:
-#    image: redis
-#    hostname: redis
-#    ports:
-#      - "6379:6379"
+# ams-session-store-redis:
+#   image: "redis:alpine"
+#   hostname: redis
+#   command: redis-server --requirepass sOmE_sEcUrE_pAsS
+#   ports:
+#     - "6379:6379"
+#   volumes:
+#     - ./data/ams-session-store-redis:/var/lib/redis
+#     - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+#   environment:
+#     - REDIS_REPLICATION_MODE=master
+#   networks:
+#     - ams-network
 
   ams-mysql-db-service:
     container_name: ams-mysql-db_container
@@ -57,7 +65,7 @@ services:
       MYSQL_DATABASE: ams_db
       MYSQL_ROOT_HOST: '%'
     volumes:
-      - ./ams-mysql-db/data:/var/lib/mysql
+      - ./data/ams-mysql-db:/var/lib/mysql
     ports:
       - "3308:3306"
     networks:
@@ -97,3 +105,8 @@ services:
       
 networks:
   ams-network:
+#  node-net:
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 172.28.0.0/16

@@ -19,6 +19,7 @@ import lombok.ToString;
 public class Specification {
 
     private Long id;
+    private Integer status;
     private String attribute;
     private String attributeDescription;
     private String dataType;
@@ -28,4 +29,5 @@ public class Specification {
     private String numericDescription;
     private String unitOfMeasure;
     private String tableValue;
+    private Long assetId;
 }

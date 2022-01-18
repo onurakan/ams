@@ -69,7 +69,7 @@
 
         methods: {
                 currentAssetId: function (event) {
-                    console.log("AssetListComponent->currentAssetId:" + event.target.innerHTML)
+                    console.log("AssetTableComponent->currentAssetId:" + event.target.innerHTML)
                     this.$emit('assetId-clicked', event.target.innerHTML);
                 },
                 openPage: function (filterUrl) {
@@ -78,7 +78,7 @@
                     axios.post(filterUrl, this.asset)
                       .then(response => {
                                 // JSON responses are automatically parsed.
-                                console.log("AssetListComponent->filterAssets response:" + JSON.stringify(response.data));
+                                console.log("AssetTableComponent->filterAssets response:" + JSON.stringify(response.data));
                                 this.isLoading = false;
                                 this.filteredAssets = response.data.data;
                                 this.page.previous = null;
@@ -90,7 +90,7 @@
                           this.isLoading = false;
                           if (e.response.status) {
                             this.isError = true;
-                            this.requestError = e.response.status + "-" + e.response.data.error;
+                            this.requestError = e.response.status + "-" + e.response.data.errorMessage;
                           }
                           this.errors.push(e)
                       })
@@ -100,13 +100,13 @@
                         return []
                     }
 
-                    this.openPage(this.ams_backend_url + '/api/asset/read/filter/1/' + this.page_size);
+                    this.openPage(this.ams_backend_url + '/api/asset/1/' + this.page_size);
                 }
         },
         created() {
             this.isLoading = true;
             this.isError = false;
-            this.openPage(this.ams_backend_url + '/api/asset/read/filter/1/' + this.page_size);
+            this.openPage(this.ams_backend_url + '/api/asset/1/' + this.page_size);
         }
      };
 </script>

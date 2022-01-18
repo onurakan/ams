@@ -1,16 +1,20 @@
 package com.onur.akan.ams.services.implementations;
 
+import com.onur.akan.ams.controllers.exception.AmsRequestException;
+import com.onur.akan.ams.domain.AssetEntity;
 import com.onur.akan.ams.domain.SpecificationEntity;
+import com.onur.akan.ams.repositories.AssetRepository;
 import com.onur.akan.ams.repositories.SpecificationRepository;
 import com.onur.akan.ams.services.SpecificationService;
-import com.onur.akan.ams.AmsRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Setter
@@ -18,6 +22,7 @@ import java.util.List;
 @Slf4j
 public class SpecificationServiceImpl implements SpecificationService {
 
+    private final AssetRepository assetRepository;
     private final SpecificationRepository specificationRepository;
 
     @Override
@@ -28,15 +33,32 @@ public class SpecificationServiceImpl implements SpecificationService {
     }
 
     @Override
+    public List<SpecificationEntity> findByAssetId(Long assetId) {
+        List<SpecificationEntity> specificationEntities = new ArrayList<>();
+        specificationRepository.findByAssetId(assetId).forEach(specificationEntities::add);
+        return specificationEntities;
+    }
+
+
+    @Override
     public SpecificationEntity getById(Long id) {
         return specificationRepository.findById(id).get();
     }
 
+    @Transactional
     @Override
     public SpecificationEntity save(SpecificationEntity specificationEntity) throws AmsRequestException {
         //TODO implement business rules here
         if (specificationEntity == null) throw new AmsRequestException("specification cannot be null");
         if (specificationEntity.getId() != null) throw new AmsRequestException("Update is not allowed");
+        if (specificationEntity.getAssetEntity() == null) throw new AmsRequestException("specification.asset cannot be null");
+        if (specificationEntity.getAssetEntity().getId() == null) throw new AmsRequestException("specification.asset.id cannot be null");
+
+        AssetEntity assetEntity = assetRepository.findById(specificationEntity.getAssetEntity().getId()).get();
+        if (assetEntity == null) throw new NoSuchElementException(String.format("asset.id=%s not found!", specificationEntity.getAssetEntity().getId()));
+
+        specificationEntity.setAssetEntity(assetEntity);
+        assetEntity.addSpecification(specificationEntity);
 
         SpecificationEntity newSpecificationEntity = specificationRepository.save(specificationEntity);
         log.info("Created specification with id=" + newSpecificationEntity.getId());

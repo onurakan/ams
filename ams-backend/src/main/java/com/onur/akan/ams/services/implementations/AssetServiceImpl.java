@@ -1,6 +1,6 @@
 package com.onur.akan.ams.services.implementations;
 
-import com.onur.akan.ams.AmsRequestException;
+import com.onur.akan.ams.controllers.exception.AmsRequestException;
 import com.onur.akan.ams.domain.AssetEntity;
 import com.onur.akan.ams.repositories.AssetRepository;
 import com.onur.akan.ams.services.AssetService;

@@ -1,4 +1,4 @@
-package com.onur.akan.ams;
+package com.onur.akan.ams.controllers.exception;
 
 /**
  * @Author Onur Akan
