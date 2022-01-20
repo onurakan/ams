@@ -23,18 +23,21 @@ import javax.validation.constraints.Min;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-@RequestMapping("/api")
+@RequestMapping(AssetController.API_V_1_ASSET)
 @RestController
 @Setter
 @CrossOrigin(origins = "http://localhost:8081") //TODO onur
 @RequiredArgsConstructor
 public class AssetController {
 
+    public static final String API_V_1_ASSET = "/api/v1/asset";
+
     private final AssetService assetService;
 
-    @GetMapping("/asset")
+    @GetMapping
     public ResponseEntity<List<Asset>> readAssets() {
         List<Asset> assets = assetService.listAll().stream()
                                                     .map(ae -> AssetMapper.INSTANCE.assetEntityToAssetIgnoreSpecificationList((AssetEntity) ae))
@@ -43,7 +46,13 @@ public class AssetController {
         return ResponseEntity.ok(assets);
     }
 
-    @PostMapping("/asset/{currentPageNumber}/{pageSize}")
+    @GetMapping("/{assetId}")
+    public ResponseEntity<Asset>  getAssetByAssetId(@PathVariable UUID assetId) {
+        AssetEntity assetEntity = assetService.findByAssetId(assetId);
+        return assetEntity != null ? ResponseEntity.ok(AssetMapper.INSTANCE.assetEntityToAssetIgnoreSpecificationList(assetEntity)) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{currentPageNumber}/{pageSize}")
     public ResponseEntity<Page<Asset>> getAssetsByFilter(@PathVariable("currentPageNumber") @Min(value = 1, message = "Page can be min = 1")  int currentPageNumber,
                                                          @PathVariable("pageSize") @Min(value = 1, message = "Size can be min=1, max=100") int pageSize,
                                                          @RequestBody Asset asset) {
@@ -56,42 +65,36 @@ public class AssetController {
                 .map(ae -> AssetMapper.INSTANCE.assetEntityToAssetIgnoreSpecificationList((AssetEntity) ae))
                 .collect(Collectors.toList());
 
-        String previousPage = assetEntityPage.hasPrevious()? "/api/asset/" + (currentPageNumber -1) + "/" +  pageSize : null;
-        String nextPage     = assetEntityPage.hasNext() ?    "/api/asset/" + (currentPageNumber + 1) + "/" +  pageSize : null;
+        String previousPage = assetEntityPage.hasPrevious()? API_V_1_ASSET + "/" + (currentPageNumber -1) + "/" +  pageSize : null;
+        String nextPage     = assetEntityPage.hasNext() ?    API_V_1_ASSET + "/" + (currentPageNumber + 1) + "/" +  pageSize : null;
 
         return ResponseEntity.ok(Page.<Asset>builder().data(assets).previousPage(previousPage).nextPage(nextPage).build());
     }
 
-    @GetMapping("/asset/{id}")
-    public ResponseEntity<Asset>  getAssetById(@PathVariable Long id) {
-        AssetEntity assetEntity = assetService.getById(id);
-        return ResponseEntity.ok(AssetMapper.INSTANCE.assetEntityToAssetIgnoreSpecificationList(assetEntity));
-    }
-
-    @PostMapping("/asset")
+    @PostMapping
     public ResponseEntity<Asset> createAsset(@RequestBody Asset asset) throws AmsRequestException {
         AssetEntity newAssetEntity = assetService.save(AssetMapper.INSTANCE.assetToAssetEntity(asset));
         Asset newAsset = AssetMapper.INSTANCE.assetEntityToAsset(newAssetEntity);
 
-        return ResponseEntity.created(URI.create("/asset/"+newAssetEntity.getId())).body(newAsset);
+        return ResponseEntity.created(URI.create(API_V_1_ASSET + "/" + newAssetEntity.getAssetId())).body(newAsset);//TODO put full url
     }
 
-    @PutMapping(value = "/asset/{id}")
-    public ResponseEntity<Long> updateAsset(@RequestBody Asset asset) throws AmsRequestException {
+    @PutMapping(value = "/{assetId}")
+    public ResponseEntity<UUID> updateAsset(@PathVariable UUID assetId, @RequestBody Asset asset) throws AmsRequestException {
         AssetEntity updatedAssetEntity = assetService.update(AssetMapper.INSTANCE.assetToAssetEntity(asset));
         if (updatedAssetEntity == null) new NoSuchElementException();
 
-        return ResponseEntity.ok(updatedAssetEntity.getId());
+        return ResponseEntity.ok(updatedAssetEntity.getAssetId());
     }
 
-    @DeleteMapping("/asset/{id}")
-    public ResponseEntity<AssetEntity> delete(@PathVariable Long id) {
-        AssetEntity assetEntity = assetService.getById(id);
+    @DeleteMapping("/{assetId}")
+    public ResponseEntity<Asset> deleteAsset(@PathVariable UUID assetId) {
+        AssetEntity assetEntity = assetService.findByAssetId(assetId);
 
         if (assetEntity == null) new NoSuchElementException();
 
-        assetService.delete(id);
+        assetService.delete(assetEntity.getId());
 
-        return ResponseEntity.ok(assetEntity);
+        return ResponseEntity.ok(AssetMapper.INSTANCE.assetEntityToAsset(assetEntity));
     }
 }

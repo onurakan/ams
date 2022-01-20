@@ -3,7 +3,10 @@
         <h2>Ams Assets</h2>
         <div class="assets">
             <p v-if="isLoading">Loading ...</p>
-            <p v-else-if="isError">Error occured: "{{requestError}}"</p>
+            <div v-else-if="isError" class="ui message red big" v-show="errors.length > 0">
+                <p>Error occured:</p>
+                <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+            </div>
 
             <table class="table table-bordered" v-else>
                 <thead>
@@ -53,9 +56,7 @@
             return {
                 isLoading: false,
                 isError: false,
-                requestError : null,
                 filteredAssets: [],
-                errors: [],
                 page: {previous: null, next: null},
                 asset: {
                     assetId: null,
@@ -63,7 +64,8 @@
                     classification: null,
                     description: null,
                     assetTag: null
-                }
+                },
+                errors:[]
             }
         },
 
@@ -73,6 +75,8 @@
                     this.$emit('assetId-clicked', event.target.innerHTML);
                 },
                 openPage: function (filterUrl) {
+                    this.errors = [];
+
                     this.asset = JSON.parse(JSON.stringify(this.asset, function (i, val) { return val === "" ? null : val;}));
 
                     axios.post(filterUrl, this.asset)
@@ -90,9 +94,8 @@
                           this.isLoading = false;
                           if (e.response.status) {
                             this.isError = true;
-                            this.requestError = e.response.status + "-" + e.response.data.errorMessage;
+                            this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
                           }
-                          this.errors.push(e)
                       })
                 },
                 filterAssets: async function () { 
@@ -100,13 +103,13 @@
                         return []
                     }
 
-                    this.openPage(this.ams_backend_url + '/api/asset/1/' + this.page_size);
+                    this.openPage(this.ams_backend_url + '/asset/1/' + this.page_size);
                 }
         },
         created() {
             this.isLoading = true;
             this.isError = false;
-            this.openPage(this.ams_backend_url + '/api/asset/1/' + this.page_size);
+            this.openPage(this.ams_backend_url + '/asset/1/' + this.page_size);
         }
      };
 </script>

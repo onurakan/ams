@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private String API_URL_PREFIX="/api/v1";
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
@@ -26,10 +27,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/assets/**").hasRole("USER")
-                .antMatchers(HttpMethod.POST, "/api/assets").hasRole("USER")
-                .antMatchers(HttpMethod.PUT, "/api/assets/**").hasRole("USER")
-                .antMatchers(HttpMethod.DELETE, "/api/assets/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, API_URL_PREFIX+"/assets/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, API_URL_PREFIX+"/assets").hasRole("USER")
+                .antMatchers(HttpMethod.PUT, API_URL_PREFIX+"/assets/**").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE, API_URL_PREFIX+"/assets/**").hasRole("ADMIN")
                 .and()
                 .csrf().disable()
                 .formLogin().disable();

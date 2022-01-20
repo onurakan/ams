@@ -22,19 +22,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-@RequestMapping("/api")
+@RequestMapping(SpecificationController.API_V_1_SPECIFICATION)
 @RestController
 @Setter
 @CrossOrigin(origins = "http://localhost:8081") //TODO onur
 @RequiredArgsConstructor
 public class SpecificationController {
 
+    public static final String API_V_1_SPECIFICATION = "/api/v1/specification";
+
     private final SpecificationService specificationService;
 
-    @GetMapping("/specification")
-    public ResponseEntity<List<Specification>> readSpecifications(@RequestParam(required = false) Long assetId) {
+    @GetMapping
+    public ResponseEntity<List<Specification>> readSpecifications(@RequestParam(required = false) UUID assetId) {
 
         List<Specification> specifications = null;
         if (assetId == null) {
@@ -51,37 +54,37 @@ public class SpecificationController {
         return ResponseEntity.ok(specifications);
     }
 
-    @GetMapping("/specification/{id}")
-    public ResponseEntity<Specification>  getSpecificationById(@PathVariable Long id) {
-        SpecificationEntity specificationEntity = specificationService.getById(id);
+    @GetMapping("/{specificationId}")
+    public ResponseEntity<Specification>  getSpecificationById(@PathVariable UUID specificationId) {
+        SpecificationEntity specificationEntity = specificationService.findBySpecificationId(specificationId);
         Specification specification = SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity);
 
-        return ResponseEntity.ok(specification);
+        return specificationEntity != null ? ResponseEntity.ok(specification) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/specification")
+    @PostMapping
     public ResponseEntity<Specification> createSpecification(@RequestBody Specification specification) throws AmsRequestException {
         SpecificationEntity newSpecificationEntity = specificationService.save(SpecificationMapper.INSTANCE.specificationToSpecificationEntity(specification));
         Specification newSpecification = SpecificationMapper.INSTANCE.specificationEntityToSpecification(newSpecificationEntity);
 
-        return ResponseEntity.created(URI.create("/specification/"+newSpecificationEntity.getId())).body(newSpecification);
+        return ResponseEntity.created(URI.create(API_V_1_SPECIFICATION + "/" + newSpecificationEntity.getSpecificationId())).body(newSpecification);//TODO put full url
     }
 
-    @PutMapping(value = "/specification/{id}")
-    public ResponseEntity<Long> updateSpecification(@RequestBody Specification specification) throws AmsRequestException {
+    @PutMapping(value = "/{specificationId}")
+    public ResponseEntity<UUID> updateSpecification(@PathVariable UUID specificationId, @RequestBody Specification specification) throws AmsRequestException {
         SpecificationEntity updatedSpecificationEntity = specificationService.update(SpecificationMapper.INSTANCE.specificationToSpecificationEntity(specification));
         if (updatedSpecificationEntity == null) new NoSuchElementException();
 
-        return ResponseEntity.ok(updatedSpecificationEntity.getId());
+        return ResponseEntity.ok(updatedSpecificationEntity.getSpecificationId());
     }
 
-    @DeleteMapping("/specification/{id}")
-    public ResponseEntity<SpecificationEntity> delete(@PathVariable Long id) {
-        SpecificationEntity specificationEntity = specificationService.getById(id);
+    @DeleteMapping("/{specificationId}")
+    public ResponseEntity<Specification> deleteSpecification (@PathVariable UUID specificationId) {
+        SpecificationEntity specificationEntity = specificationService.findBySpecificationId(specificationId);
         if (specificationEntity == null) new NoSuchElementException();
 
-        specificationService.delete(id);
+        specificationService.delete(specificationEntity.getId());
 
-        return ResponseEntity.ok(specificationEntity);
+        return ResponseEntity.ok(SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity));
     }
 }

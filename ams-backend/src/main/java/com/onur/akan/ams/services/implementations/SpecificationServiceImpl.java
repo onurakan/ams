@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @Setter
@@ -33,10 +34,15 @@ public class SpecificationServiceImpl implements SpecificationService {
     }
 
     @Override
-    public List<SpecificationEntity> findByAssetId(Long assetId) {
+    public List<SpecificationEntity> findByAssetId(UUID assetId) {
         List<SpecificationEntity> specificationEntities = new ArrayList<>();
         specificationRepository.findByAssetId(assetId).forEach(specificationEntities::add);
         return specificationEntities;
+    }
+
+    @Override
+    public SpecificationEntity findBySpecificationId(UUID specificationId) {
+        return specificationRepository.findBySpecificationId(specificationId).get();
     }
 
 
@@ -45,16 +51,16 @@ public class SpecificationServiceImpl implements SpecificationService {
         return specificationRepository.findById(id).get();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public SpecificationEntity save(SpecificationEntity specificationEntity) throws AmsRequestException {
         //TODO implement business rules here
         if (specificationEntity == null) throw new AmsRequestException("specification cannot be null");
         if (specificationEntity.getId() != null) throw new AmsRequestException("Update is not allowed");
         if (specificationEntity.getAssetEntity() == null) throw new AmsRequestException("specification.asset cannot be null");
-        if (specificationEntity.getAssetEntity().getId() == null) throw new AmsRequestException("specification.asset.id cannot be null");
+        if (specificationEntity.getAssetEntity().getAssetId() == null) throw new AmsRequestException("specification.asset.assetId cannot be null");
 
-        AssetEntity assetEntity = assetRepository.findById(specificationEntity.getAssetEntity().getId()).get();
+        AssetEntity assetEntity = assetRepository.readByAssetId(specificationEntity.getAssetEntity().getAssetId()).get();
         if (assetEntity == null) throw new NoSuchElementException(String.format("asset.id=%s not found!", specificationEntity.getAssetEntity().getId()));
 
         specificationEntity.setAssetEntity(assetEntity);

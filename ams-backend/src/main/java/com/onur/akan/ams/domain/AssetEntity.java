@@ -14,8 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Author Onur Akan
@@ -32,14 +34,22 @@ public class AssetEntity {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "nasset_id", length = 16, nullable = false)
+    private UUID assetId;
+
     @Column(name = "nstatus", nullable = false)
     private Integer status;
+
     @Column(name = "vclassification", nullable = false)
     private String classification;
+
     @Column(name = "vdescription", nullable = false)
     private String description;
+
     @Column(name = "vasset_tag")
     private String assetTag;
+
     @OneToMany(mappedBy = "assetEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SpecificationEntity> specificationList;
 
@@ -51,5 +61,10 @@ public class AssetEntity {
     //@Transient
     public void removeSpecification(SpecificationEntity specificationEntity) {
         specificationList.remove(specificationEntity);
+    }
+
+    @PrePersist
+    public void autofill() {
+        this.setAssetId(UUID.randomUUID());
     }
 }

@@ -48,7 +48,7 @@
             SpecificationFormComponent
         },
         props:['assetId'],
-        watch: { 
+        watch: {
             assetId: function(newVal, oldVal) { // watch it
                 console.log('AssetComponent->Watch assetId: ', newVal, ' | was: ', oldVal);
                 this.lazy_AssetId = newVal;

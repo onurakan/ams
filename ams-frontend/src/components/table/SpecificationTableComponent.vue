@@ -4,14 +4,17 @@
         <div class="specifications">
             <p v-if="isLoading">Loading ...</p>
             <p v-else-if="isUpdating">Updating, please wait ...</p>
-            <p v-else-if="isError">Error occured: "{{requestError}}"</p>
+            <div v-else-if="isError" class="ui message red big" v-show="errors.length > 0">
+                <p>Error occured:</p>
+                <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+            </div>
             <div v-else>
                 <label>Asset# {{assetId}}</label>
             
                 <table class="table table-bordered" >
                     <thead>
                     <tr>
-                        <th>Id</th>
+                        <th>specificationId</th>
                         <th>attribute</th>
                         <th>attributeDescription</th>
                         <th>dataType</th>
@@ -24,8 +27,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="specification in specifications" :key="specification.id">
-                            <td><a href="javascript:void(0);" v-on:click="currentSpecificationId">{{ specification.id }}</a></td>
+                        <tr v-for="specification in specifications" :key="specification.specificationId">
+                            <td><a href="javascript:void(0);" v-on:click="currentSpecificationId">{{ specification.specificationId }}</a></td>
                             <td>
                                 <input v-if="edit2" v-model="specification.attribute" @blur="edit2 = false; $emit('update'); updateSpecification(specification.id)" @keyup.enter="edit2=false; $emit('update')" v-focus>
                                 <div v-else>
@@ -100,7 +103,6 @@
                 isLoading: true,
                 isUpdating: false,
                 isError: false,
-                requestError : null,
                 edit2: false,
                 edit3: false,
                 edit4: false,
@@ -109,15 +111,15 @@
                 edit7: false,
                 edit8: false,
                 edit9: false,
-                edit10: false
-            }
+                edit10: false,
+                errors:[]
+           }
         },
         created() {
             this.fetchSpecifications(this.assetId);
         },
-        watch: { 
+        watch: {
             assetId: function(newVal, oldVal) { // watch it
-                alert("Aha:"+ newVal);
                 console.log('SpecificationTableComponent->Watch assetId: ', newVal, ' | was: ', oldVal);
                 this.fetchSpecifications(newVal);
             }
@@ -128,6 +130,7 @@
                     this.$emit('specificationId-clicked', event.target.innerHTML);
                 },
             updateSpecification : function (specificationId) {
+                this.errors = [];
                 this.isUpdating = true;
                 
                 this.specifications.forEach(element => {
@@ -135,7 +138,7 @@
                         alert("specificationId=" + specificationId + " will be updated!");
                         console.log("SpecificationTableComponent->updateSpecification request: " +JSON.stringify(element));
                         this.isError = false;
-                        axios.put(this.ams_backend_url + '/api/specification/' + specificationId, element)
+                        axios.put(this.ams_backend_url + '/specification/' + specificationId, element)
                                 .then(response => {
                                                     // JSON responses are automatically parsed.
                                                     console.log("SpecificationTableComponent->updateSpecification response:" + JSON.stringify(response.data));
@@ -146,21 +149,22 @@
                                     this.isUpdating = false;
                                     if (e.response.status) {
                                         this.isError = true;
-                                        this.requestError = e.response.status + "-" + e.response.data.errorMessage;
+                                        this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
                                     }
-                                    this.errors.push(e)
                                 })
                     }
                 });
             },
             fetchSpecifications : function (inAssetId) {
-                if (inAssetId>0) {
+                this.errors = [];
+
+                if (inAssetId != null && inAssetId != -1) {
                     console.log("SpecificationTableComponent->fetchSpecifications request for assetId=" + inAssetId)
                     
                     this.isLoading=true;
                     this.isError = false;
                     
-                    axios.get(this.ams_backend_url + '/api/specification?assetId=' + inAssetId, this.auth)
+                    axios.get(this.ams_backend_url + '/specification?assetId=' + inAssetId, this.auth)
                         .then(response => {
                                             // JSON responses are automatically parsed.
                                             console.log("SpecificationTableComponent->fetchSpecifications response:" + JSON.stringify(response.data));
@@ -172,9 +176,8 @@
 
                             if (e.response.status) {
                                 this.isError = true;
-                                this.requestError = e.response.status + "-" + e.response.data.errorMessage;
+                                this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
                             }
-                            this.errors.push(e);
                         })
                 } else {
                     this.specifications = [];

@@ -15,8 +15,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Setter
@@ -49,6 +51,12 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    public AssetEntity findByAssetId(UUID assetId) {
+        return assetRepository.readByAssetId(assetId).get();
+    }
+
+    @Override
+    @Transactional
     public AssetEntity save(AssetEntity assetEntity) throws AmsRequestException {
         //TODO implement business rules here
         if (assetEntity == null) throw new AmsRequestException("asset cannot be null");

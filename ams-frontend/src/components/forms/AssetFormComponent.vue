@@ -2,7 +2,10 @@
   <div>
     <p v-if="isLoading">Loading...</p>
     <p v-else-if="isUpdating">Updating, please wait ...</p>
-    <p v-else-if="isError">Error occured: "{{requestError}}"</p>
+    <div v-else-if="isError" class="ui message red big" v-show="errors.length > 0">
+      <p>Error occured:</p>
+      <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+    </div>
     <div v-else>
       
       <div>
@@ -70,7 +73,6 @@
           isLoading: false,
           isUpdating: false,
           isError: false,
-          requestError : null,
           asset: {
             assetId: null,
             status: null,
@@ -81,26 +83,29 @@
           edit3: false,
           edit4: false,
           edit5: false,
-          edit6: false
-
+          edit6: false,
+          errors:[]
       }
     },
     watch: { 
       assetId: function(newVal, oldVal) { // watch it
-      console.log('AssetFormComponent->Watch assetId: ', newVal, ' | was: ', oldVal);
+        console.log('AssetFormComponent-> Watch: assetId changed to:' + newVal + ', was:' + oldVal);
         this.fetchAsset(newVal);
       }
     },
     created() {
+      console.log('AssetFormComponent-created called. assetId:' + this.assetId);
       this.fetchAsset(this.assetId);
     },
     methods: {
         fetchAsset : async function (inAssetId) {
-          if (inAssetId>0) {
+          this.errors = [];
+
+          if (inAssetId != null && inAssetId != -1) {
             console.log("AssetFormComponent->fetchAsset request for assetId=" + inAssetId)
             this.isLoading=true;
             this.isError = false;
-            axios.get(this.ams_backend_url + '/api/asset/' + inAssetId, this.auth)
+            axios.get(this.ams_backend_url + '/asset/' + inAssetId, this.auth)
                 .then(response => {
                                     // JSON responses are automatically parsed.
                                     console.log("AssetFormComponent->fetchAsset response:" + JSON.stringify(response.data));
@@ -113,9 +118,8 @@
                   
                   if (e.response.status) {
                     this.isError = true;
-                    this.requestError = e.response.status + "-" + e.response.data.errorMessage;
+                    this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
                   }
-                  this.errors.push(e);
                 })
           } else { //new Asset
             this.asset ={
@@ -132,6 +136,8 @@
           }
         },
         createAsset : function () {
+          this.errors = [];
+
           if (this.asset.status != null &&
                 this.asset.classification != null &&
                 this.asset.description != null &&
@@ -145,7 +151,7 @@
               alert("New asset will be created!");
               console.log("AssetFormComponent->createAsset request:" +JSON.stringify(this.asset));
               this.isError = false;
-              axios.post(this.ams_backend_url + '/api/asset', this.asset)
+              axios.post(this.ams_backend_url + '/asset', this.asset)
                       .then(response => {
                                           // JSON responses are automatically parsed.
                                           console.log("AssetFormComponent->createAsset response:" + JSON.stringify(response.data));
@@ -157,14 +163,18 @@
                           this.isUpdating = false;
                           if (e.response.status) {
                             this.isError = true;
-                            this.requestError = e.response.status + "-" + e.response.data.errorMessage;
+                            this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
                           }
-                          this.errors.push(e)
                       })
             }
         },
-        updateAsset : function (assetId) {
-          if (assetId != null && assetId != '') {
+        updateAsset : function () {
+          this.errors = [];
+
+          event.target.readonly = true;
+          let assetId = this.asset.assetId;
+
+          if (assetId != null && assetId != -1) {
             this.edit3 = false;
             this.edit4 = false;
             this.edit5 = false;
@@ -174,7 +184,7 @@
             this.isUpdating = true;
             console.log("AssetFormComponent->updateAsset request:" +JSON.stringify(this.asset));
             this.isError = false;
-            axios.put(this.ams_backend_url + '/api/asset/' + assetId, this.asset, this.auth)
+            axios.put(this.ams_backend_url + '/asset/' + assetId, this.asset, this.auth)
                     .then(response => {
                                         // JSON responses are automatically parsed.
                                         console.log("AssetFormComponent->updateAsset response:" + JSON.stringify(response.data));
@@ -185,9 +195,9 @@
                         this.isUpdating = false;
                         if (e.response.status) {
                           this.isError = true;
-                          this.requestError = e.response.status + "-" + e.response.data.errorMessage;
+                          this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
                         }
-                        this.errors.push(e)
+                        
                     })
           }
         }

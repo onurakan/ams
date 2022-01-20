@@ -10,8 +10,8 @@ public interface SpecificationMapper {
 
     SpecificationMapper INSTANCE = Mappers.getMapper(SpecificationMapper.class);
 
-    @Mapping(source="assetId", target="assetEntity.id")
+    @Mapping(target="assetEntity.assetId", source="assetId")
     SpecificationEntity specificationToSpecificationEntity(Specification specification);
-    @Mapping(source="assetEntity.id", target="assetId")
+    @Mapping(target="assetId", source="assetEntity.assetId")
     Specification specificationEntityToSpecification(SpecificationEntity specificationEntity);
 }

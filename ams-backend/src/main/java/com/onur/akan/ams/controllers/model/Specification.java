@@ -1,11 +1,14 @@
 package com.onur.akan.ams.controllers.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.UUID;
 
 /**
  * @Author Onur Akan
@@ -16,9 +19,10 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Specification {
 
-    private Long id;
+    private UUID specificationId;
     private Integer status;
     private String attribute;
     private String attributeDescription;
@@ -29,5 +33,5 @@ public class Specification {
     private String numericDescription;
     private String unitOfMeasure;
     private String tableValue;
-    private Long assetId;
+    private UUID assetId;
 }

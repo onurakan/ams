@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
@@ -43,8 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 public class SpecificationControllerTest {
 
-    @Autowired
-    private AssetController assetController;
+    private String API_V1_SPECIFICATION = SpecificationController.API_V_1_SPECIFICATION;
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,41 +52,42 @@ public class SpecificationControllerTest {
     @MockBean
     private SpecificationRepository specificationRepository;
 
-    private SpecificationService specificationService;
-
     private static Gson gson;
+
     @BeforeAll
     public static void setup () {
-        gson = new GsonBuilder().serializeNulls().create();
+        gson = new GsonBuilder().create();
     }
 
     @Test
-    public void assetController_is_initialized() {
+    public void specificationRepository_is_initialized() {
         assertThat(specificationRepository, is(not(nullValue())));
     }
 
     @Test
     public void should_read_specification_non() throws Exception {
-        when(specificationRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
+        UUID specificationId = UUID.randomUUID();
+        when(specificationRepository.findBySpecificationId(specificationId)).thenReturn(Optional.ofNullable(null));
 
-        this.mockMvc.perform(get("/api/specification/1")).andDo(print()).andExpect(status().isNotFound());
+        this.mockMvc.perform(get(API_V1_SPECIFICATION+"/"+specificationId)).andDo(print()).andExpect(status().isNotFound());
     }
 
     @Test
     public void should_read_specification_one() throws Exception {
-        SpecificationEntity specificationEntity  = SpecificationEntity.builder().id(1L).build();
-        when(specificationRepository.findById(1L)).thenReturn(Optional.of(specificationEntity));
+        UUID specificationId = UUID.randomUUID();
+        SpecificationEntity specificationEntity  = SpecificationEntity.builder().specificationId(specificationId).build();
+        when(specificationRepository.findBySpecificationId(specificationId)).thenReturn(Optional.of(specificationEntity));
 
-        this.mockMvc.perform(get("/api/specification/1")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get(API_V1_SPECIFICATION+"/"+specificationId)).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(gson.toJson(SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity))));
     }
 
     @Test
     public void should_read_specification_all() throws Exception {
-        SpecificationEntity specificationEntity1 = SpecificationEntity.builder().id(1L).build();
-        SpecificationEntity specificationEntity2 = SpecificationEntity.builder().id(2L).build();
-        SpecificationEntity specificationEntity3 = SpecificationEntity.builder().id(3L).build();
-        SpecificationEntity specificationEntity4 = SpecificationEntity.builder().id(4L).build();
+        SpecificationEntity specificationEntity1 = SpecificationEntity.builder().specificationId(UUID.randomUUID()).build();
+        SpecificationEntity specificationEntity2 = SpecificationEntity.builder().specificationId(UUID.randomUUID()).build();
+        SpecificationEntity specificationEntity3 = SpecificationEntity.builder().specificationId(UUID.randomUUID()).build();
+        SpecificationEntity specificationEntity4 = SpecificationEntity.builder().specificationId(UUID.randomUUID()).build();
         when(specificationRepository.findAll()).thenReturn(Arrays.asList(specificationEntity1,specificationEntity2,specificationEntity3,specificationEntity4));
 
         String out_asset = gson.toJson(Arrays.asList(SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity1),
@@ -94,7 +95,7 @@ public class SpecificationControllerTest {
                 SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity3),
                 SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity4)));
 
-        this.mockMvc.perform(get("/api/specification")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get(API_V1_SPECIFICATION)).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(out_asset));
     }
 }

@@ -1,11 +1,13 @@
 package com.onur.akan.ams.services;
 
 import com.onur.akan.ams.domain.SpecificationEntity;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface SpecificationService extends CRUDService<SpecificationEntity>{
     
-    List<SpecificationEntity> findByAssetId(Long assetId);
+    List<SpecificationEntity> findByAssetId(UUID assetId);
+
+    SpecificationEntity findBySpecificationId(UUID specificationId);
 }

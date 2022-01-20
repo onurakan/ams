@@ -85,10 +85,13 @@ public class AmsResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     }
 
     private boolean isTraceOn(WebRequest request) {
+        return true;
+    }
+    /*private boolean isTraceOn(WebRequest request) {
         String[] value = request.getParameterValues(TRACE);
         return Objects.nonNull(value)
                 && value.length > 0
                 && value[0].contentEquals("true");
-    }
+    }*/
 
 }
