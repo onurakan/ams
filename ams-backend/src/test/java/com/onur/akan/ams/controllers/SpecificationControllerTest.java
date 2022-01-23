@@ -3,22 +3,20 @@ package com.onur.akan.ams.controllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.onur.akan.ams.AmsApplication;
+import com.onur.akan.ams.bootstrap.AssetLoader;
 import com.onur.akan.ams.controllers.model.SpecificationMapper;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.repositories.SpecificationRepository;
-import com.onur.akan.ams.services.SpecificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -35,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
 @AutoConfigureMockMvc
 @WithMockUser(username = "user", roles = {"USER", "ADMIN"})
@@ -51,6 +48,9 @@ public class SpecificationControllerTest {
 
     @MockBean
     private SpecificationRepository specificationRepository;
+
+    @MockBean
+    private AssetLoader assetLoader;//in order to ignore this loader, mock it out.
 
     private static Gson gson;
 

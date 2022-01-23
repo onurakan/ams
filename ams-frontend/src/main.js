@@ -14,7 +14,7 @@ app.config.globalProperties.auth = {
     }
     
 app.config.globalProperties.ams_backend_url=process.env.VUE_APP_AMS_BACKEND_URL
-app.config.globalProperties.page_size=4
+app.config.globalProperties.page_size=10
 
 console.info("Vue is using AMS_BACKEND_URL=" + app.config.globalProperties.ams_backend_url);
 

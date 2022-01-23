@@ -3,6 +3,7 @@ package com.onur.akan.ams.controllers.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 @ControllerAdvice
 @Slf4j
@@ -42,7 +42,7 @@ public class AmsResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler(AmsRequestException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    protected ResponseEntity<Object> handleAmsRequestException(AmsRequestException amsRequestException, WebRequest request) {
+    protected ResponseEntity<ErrorResponse> handleAmsRequestException(AmsRequestException amsRequestException, WebRequest request) {
         String message = "Request Validation error: '" + amsRequestException.getMessage() + "'";
         log.error(message, amsRequestException);
 
@@ -51,16 +51,24 @@ public class AmsResponseEntityExceptionHandler extends ResponseEntityExceptionHa
 
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleNoSuchElementFoundException(NoSuchElementException noSuchElementException, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleNoSuchElementFoundException(NoSuchElementException noSuchElementException, WebRequest request) {
         String message = "Failed to find the requested element.";
         log.error(message, noSuchElementException);
 
-        return buildErrorResponse(noSuchElementException, HttpStatus.NOT_FOUND, request);
+        return buildErrorResponse(noSuchElementException, noSuchElementException.getMessage(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException dataIntegrityViolationException, WebRequest request) {
+        log.error("Data is not valid!", dataIntegrityViolationException);
+
+        return buildErrorResponse(dataIntegrityViolationException, dataIntegrityViolationException.getMessage(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Object> handleAllUncaughtException(RuntimeException exception,  WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleAllUncaughtException(RuntimeException exception,  WebRequest request) {
         String message = "Unknown error occurred.";
         log.error(message, exception);
 
@@ -68,15 +76,7 @@ public class AmsResponseEntityExceptionHandler extends ResponseEntityExceptionHa
     }
 
 
-
-
-
-
-    private ResponseEntity<Object> buildErrorResponse(Exception exception, HttpStatus httpStatus, WebRequest request) {
-        return buildErrorResponse(exception, exception.getMessage(), httpStatus, request);
-    }
-
-    private ResponseEntity<Object> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus, WebRequest request) {
+    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, String message, HttpStatus httpStatus, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(httpStatus.value(), message);
         if (printStackTrace && isTraceOn(request)) {
             errorResponse.setStackTrace(ExceptionUtils.getStackTrace(exception));

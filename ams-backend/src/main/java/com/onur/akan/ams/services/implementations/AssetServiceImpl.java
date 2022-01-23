@@ -71,7 +71,7 @@ public class AssetServiceImpl implements AssetService {
     public AssetEntity update(AssetEntity assetEntity) throws AmsRequestException {
         //TODO implement business rules here
         if (assetEntity == null) throw new AmsRequestException("asset cannot be null");
-        if (assetEntity.getId() == null) throw new AmsRequestException("asset.id cannot be null");
+        if (assetEntity.getAssetId() == null) throw new AmsRequestException("assetId cannot be null");
 
         return assetRepository.save(assetEntity);
     }

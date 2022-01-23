@@ -8,6 +8,7 @@ import com.onur.akan.ams.domain.AssetEntity;
 import com.onur.akan.ams.services.AssetService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.net.URI;
 import java.util.List;
@@ -65,14 +68,14 @@ public class AssetController {
                 .map(ae -> AssetMapper.INSTANCE.assetEntityToAssetIgnoreSpecificationList((AssetEntity) ae))
                 .collect(Collectors.toList());
 
-        String previousPage = assetEntityPage.hasPrevious()? API_V_1_ASSET + "/" + (currentPageNumber -1) + "/" +  pageSize : null;
-        String nextPage     = assetEntityPage.hasNext() ?    API_V_1_ASSET + "/" + (currentPageNumber + 1) + "/" +  pageSize : null;
+        String previousPage = assetEntityPage.hasPrevious()? "/asset/" + (currentPageNumber -1) + "/" +  pageSize : null;//TODO put host address in URL
+        String nextPage     = assetEntityPage.hasNext() ?    "/asset/" + (currentPageNumber + 1) + "/" +  pageSize : null;//TODO put host address in URL
 
         return ResponseEntity.ok(Page.<Asset>builder().data(assets).previousPage(previousPage).nextPage(nextPage).build());
     }
 
     @PostMapping
-    public ResponseEntity<Asset> createAsset(@RequestBody Asset asset) throws AmsRequestException {
+    public ResponseEntity<Asset> createAsset(@Valid @RequestBody Asset asset) throws AmsRequestException {
         AssetEntity newAssetEntity = assetService.save(AssetMapper.INSTANCE.assetToAssetEntity(asset));
         Asset newAsset = AssetMapper.INSTANCE.assetEntityToAsset(newAssetEntity);
 
@@ -80,21 +83,19 @@ public class AssetController {
     }
 
     @PutMapping(value = "/{assetId}")
-    public ResponseEntity<UUID> updateAsset(@PathVariable UUID assetId, @RequestBody Asset asset) throws AmsRequestException {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateAsset(@PathVariable UUID assetId, @Valid @RequestBody Asset asset) throws AmsRequestException {
         AssetEntity updatedAssetEntity = assetService.update(AssetMapper.INSTANCE.assetToAssetEntity(asset));
         if (updatedAssetEntity == null) new NoSuchElementException();
-
-        return ResponseEntity.ok(updatedAssetEntity.getAssetId());
     }
 
     @DeleteMapping("/{assetId}")
-    public ResponseEntity<Asset> deleteAsset(@PathVariable UUID assetId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAsset(@PathVariable UUID assetId) {
         AssetEntity assetEntity = assetService.findByAssetId(assetId);
 
         if (assetEntity == null) new NoSuchElementException();
 
         assetService.delete(assetEntity.getId());
-
-        return ResponseEntity.ok(AssetMapper.INSTANCE.assetEntityToAsset(assetEntity));
     }
 }

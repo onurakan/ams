@@ -4,19 +4,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.onur.akan.ams.AmsApplication;
-import com.onur.akan.ams.controllers.model.Asset;
+import com.onur.akan.ams.bootstrap.AssetLoader;
 import com.onur.akan.ams.controllers.model.AssetMapper;
+import com.onur.akan.ams.domain.AmsEntityStatus;
 import com.onur.akan.ams.domain.AssetEntity;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.repositories.AssetRepository;
-import com.onur.akan.ams.services.AssetService;
 import com.onur.akan.ams.services.implementations.AssetServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -46,7 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
 @AutoConfigureMockMvc
 @WithMockUser(username = "user", roles = {"USER", "ADMIN"})
@@ -62,6 +59,9 @@ public class AssetControllerTest {
 
     @MockBean
     private AssetRepository assetRepository;
+
+    @MockBean
+    private AssetLoader assetLoader;//in order to ignore this loader, mock it out.
 
     private static Gson gson;
 
@@ -89,8 +89,10 @@ public class AssetControllerTest {
         AssetEntity assetEntity  = AssetEntity.builder().assetId(assetId).build();
         when(assetRepository.readByAssetId(assetId)).thenReturn(Optional.of(assetEntity));
 
-        this.mockMvc.perform(get(API_V1_ASSET + "/" + assetId)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().json(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(assetEntity))));
+        this.mockMvc.perform(get(API_V1_ASSET + "/" + assetId))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(content().json(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(assetEntity))));
     }
 
     @Test
@@ -106,37 +108,18 @@ public class AssetControllerTest {
                                                     AssetMapper.INSTANCE.assetEntityToAsset(assetEntity3),
                                                     AssetMapper.INSTANCE.assetEntityToAsset(assetEntity4)));
 
-        this.mockMvc.perform(get(API_V1_ASSET)).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get(API_V1_ASSET))
+                .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(content().json(out_asset));
     }
 
-    /**
-     {
-         "assetId" : null,
-         "status"  : 0,
-         "classification" : "NEW",
-         "description" : "New Asseet Creation",
-         "assetTag": "new assetTag",
-         "specificationList" : [
-             {
-                 "attribute" : "new_attribute",
-                 "attributeDescription" : "new_attribute_description",
-                 "dataType" : "new_dataType",
-                 "alphanumericValue" : "new_aplhanumericValue",
-                 "alphanumericDescription" : "new_alphanumeric_description",
-                 "numericValue" : "new_numericValue",
-                 "numericDescription" : "new_numericDescription",
-                 "unitOfMeasure" : "new_unitOfMeasue",
-                 "tableValue" : "new_tableValue"
-             }
-         ]
-     }
-     */
+
     @Test
     public void should_read_asset_by_filter() throws Exception {
         UUID assetId = UUID.randomUUID();
-        AssetEntity in_assetEntity = AssetEntity.builder().status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
-        AssetEntity out_assetEntity = AssetEntity.builder().assetId(assetId).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
+        AssetEntity in_assetEntity = AssetEntity.builder().status(AmsEntityStatus.ACTIVE).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
+        AssetEntity out_assetEntity = AssetEntity.builder().assetId(assetId).status(AmsEntityStatus.ACTIVE).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
 
         when(assetRepository.findAll(Example.of(in_assetEntity, AssetServiceImpl.CUSTOM_EXAMPLE_MATCHER), PageRequest.of(0, 100, Sort.by("id").ascending()))).thenReturn(new PageImpl(Arrays.asList(out_assetEntity)));
 
@@ -145,56 +128,28 @@ public class AssetControllerTest {
         jsonObject.add("previousPage", null);
         jsonObject.add("nextPage", null);
 
-        mockMvc.perform(post(API_V1_ASSET+"/1/100").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
+        mockMvc.perform(post(API_V1_ASSET+"/1/100")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
                 .andExpect(status().isOk())
                 .andExpect(content().json(gson.toJson(jsonObject)));
     }
 
-    /**
-    {
-        "assetId" : null,
-            "status"  : 0,
-            "classification" : "NEW",
-            "description" : "New Asseet Creation",
-            "assetTag": "new assetTag",
-            "specificationList" : null
-    }
-     */
     @Test
     public void should_create_asset() throws Exception {
         UUID assetId = UUID.randomUUID();
 
-        AssetEntity in_assetEntity = AssetEntity.builder().status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
-        AssetEntity out_assetEntity = AssetEntity.builder().assetId(assetId).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
+        AssetEntity in_assetEntity = AssetEntity.builder().classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
+        AssetEntity out_assetEntity = AssetEntity.builder().assetId(assetId).status(AmsEntityStatus.ACTIVE).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
         when(assetRepository.save(in_assetEntity)).thenReturn(out_assetEntity);
 
-        mockMvc.perform(post(API_V1_ASSET).contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
+        mockMvc.perform(post(API_V1_ASSET)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(gson.toJson(AssetMapper.INSTANCE.assetEntityToAssetIgnoreSpecificationList(out_assetEntity))));
     }
 
-    /**
-     {
-        "assetId" : null,
-            "status"  : 0,
-            "classification" : "NEW",
-            "description" : "New Asseet Creation",
-            "assetTag": "new assetTag",
-            "specificationList" : [
-                                    {
-                                        "attribute" : "new_attribute",
-                                            "attributeDescription" : "new_attribute_description",
-                                            "dataType" : "new_dataType",
-                                            "alphanumericValue" : "new_aplhanumericValue",
-                                            "alphanumericDescription" : "new_alphanumeric_description",
-                                            "numericValue" : "new_numericValue",
-                                            "numericDescription" : "new_numericDescription",
-                                            "unitOfMeasure" : "new_unitOfMeasue",
-                                            "tableValue" : "new_tableValue"
-                                    }
-                                ]
-    }
-     */
     @Test
     public void should_create_asset_and_specification() throws Exception {
         UUID assetId = UUID.randomUUID();
@@ -202,12 +157,14 @@ public class AssetControllerTest {
 
         List<SpecificationEntity> in_specificationEntities = Arrays.asList(SpecificationEntity.builder().attribute("AN_ATTR").attributeDescription("AN_ATTR_DESC").dataType("A_DT").alphanumericValue("A_NV").alphanumericDescription("A_AD").numericValue("A_NV").numericDescription("A_ND").unitOfMeasure("A_UD").tableValue("A_TV").build());
         List<SpecificationEntity> out_specificationEntities = Arrays.asList(SpecificationEntity.builder().specificationId(specificationId).attribute("AN_ATTR").attributeDescription("AN_ATTR_DESC").dataType("A_DT").alphanumericValue("A_NV").alphanumericDescription("A_AD").numericValue("A_NV").numericDescription("A_ND").unitOfMeasure("A_UD").tableValue("A_TV").build());
-        AssetEntity in_assetEntity = AssetEntity.builder().status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(in_specificationEntities).build();
-        AssetEntity out_assetEntity = AssetEntity.builder().assetId(assetId).status(0).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(out_specificationEntities).build();
+        AssetEntity in_assetEntity = AssetEntity.builder().classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(in_specificationEntities).build();
+        AssetEntity out_assetEntity = AssetEntity.builder().assetId(assetId).status(AmsEntityStatus.ACTIVE).classification("NEW").description("New Asset Creation").assetTag("A_TAG").specificationList(out_specificationEntities).build();
         when(assetRepository.save(in_assetEntity)).thenReturn(out_assetEntity);
 
 
-        mockMvc.perform(post(API_V1_ASSET).contentType(MediaType.APPLICATION_JSON).content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
+        mockMvc.perform(post(API_V1_ASSET)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity))))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(out_assetEntity))));
     }

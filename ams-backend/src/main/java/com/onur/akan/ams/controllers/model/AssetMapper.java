@@ -12,7 +12,8 @@ public interface AssetMapper {
     AssetMapper INSTANCE = Mappers.getMapper(AssetMapper.class);
 
     @Mappings({
-            @Mapping(target="specificationList", source="asset.specificationList")
+            @Mapping(target="specificationList", source="asset.specificationList"),
+            @Mapping(target="id", ignore = true)
     })
     AssetEntity assetToAssetEntity(Asset asset);
 

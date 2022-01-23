@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
-public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+public class AmsWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     private String API_URL_PREFIX="/api/v1";
     @Override

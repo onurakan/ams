@@ -96,7 +96,7 @@ services:
       context: ams-frontend
       target: 'develop-stage'
     environment:
-      VUE_APP_AMS_BACKEND_URL: http://localhost:8080
+      VUE_APP_AMS_BACKEND_URL: http://localhost:8080/api/v1
     ports:
     - '80:8080' #HOST_PORT:CONTAINER_PORT
     volumes:

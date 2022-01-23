@@ -7,6 +7,7 @@ import com.onur.akan.ams.controllers.exception.AmsRequestException;
 import com.onur.akan.ams.services.SpecificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -71,20 +73,18 @@ public class SpecificationController {
     }
 
     @PutMapping(value = "/{specificationId}")
-    public ResponseEntity<UUID> updateSpecification(@PathVariable UUID specificationId, @RequestBody Specification specification) throws AmsRequestException {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateSpecification(@PathVariable UUID specificationId, @RequestBody Specification specification) throws AmsRequestException {
         SpecificationEntity updatedSpecificationEntity = specificationService.update(SpecificationMapper.INSTANCE.specificationToSpecificationEntity(specification));
         if (updatedSpecificationEntity == null) new NoSuchElementException();
-
-        return ResponseEntity.ok(updatedSpecificationEntity.getSpecificationId());
     }
 
     @DeleteMapping("/{specificationId}")
-    public ResponseEntity<Specification> deleteSpecification (@PathVariable UUID specificationId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSpecification (@PathVariable UUID specificationId) {
         SpecificationEntity specificationEntity = specificationService.findBySpecificationId(specificationId);
         if (specificationEntity == null) new NoSuchElementException();
 
         specificationService.delete(specificationEntity.getId());
-
-        return ResponseEntity.ok(SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity));
     }
 }
