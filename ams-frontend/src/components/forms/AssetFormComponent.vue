@@ -11,13 +11,13 @@
       <div>
         <div class="divTable" style="width: 51%">
           <div class="divTableBody">
-            <div class="divTableRow">
+            <div class="divTableRow" v-if="asset.assetId != null">
               <div class="divTableCell"><label for="assetId">Asset Id:</label></div>
               <div class="divTableCell">
                   <label> {{asset.assetId}} </label>
               </div>
             </div>
-            <div class="divTableRow">
+            <div class="divTableRow" v-if="asset.status != null">
               <div class="divTableCell"><label for="assetStatus">Status:</label></div>
               <div v-if="edit3" class="divTableCell">
                 <select v-model="asset.status" id="assetStatus" @blur="$emit('update'); updateAsset()" @keyup.enter="$emit('update')" v-focus>
@@ -141,8 +141,7 @@
         createAsset : function () {
           this.errors = [];
 
-          if (this.asset.status != null &&
-                this.asset.classification != null &&
+          if (this.asset.classification != null &&
                 this.asset.description != null &&
                 this.asset.assetTag != null
                 ) {
@@ -160,6 +159,7 @@
                                           console.log("AssetFormComponent->createAsset response:" + JSON.stringify(response.data));
                                           this.isUpdating = false;
                                           this.asset.assetId = response.data.assetId;
+                                          this.asset.status = response.data.status;
                                           alert("assetId=" + this.asset.assetId + " is created :)");
                                       })
                       .catch(e => {
