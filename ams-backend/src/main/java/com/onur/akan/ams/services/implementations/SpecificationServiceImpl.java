@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -28,16 +27,12 @@ public class SpecificationServiceImpl implements SpecificationService {
 
     @Override
     public List<?> listAll() {
-        List<SpecificationEntity> specificationEntities = new ArrayList<>();
-        specificationRepository.findAll().forEach(specificationEntities::add);
-        return specificationEntities;
+        return specificationRepository.findAll();
     }
 
     @Override
     public List<SpecificationEntity> findByAssetId(UUID assetId) {
-        List<SpecificationEntity> specificationEntities = new ArrayList<>();
-        specificationRepository.findByAssetId(assetId).forEach(specificationEntities::add);
-        return specificationEntities;
+        return specificationRepository.findByAssetId(assetId);
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,9 +35,7 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public List<?> listAll() {
-        List<AssetEntity> entities = new ArrayList<>();
-        assetRepository.findAll().forEach(entities::add);
-        return entities;
+        return assetRepository.findAll();
     }
 
     public static ExampleMatcher CUSTOM_EXAMPLE_MATCHER = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase();
@@ -57,7 +55,7 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     @Transactional
-    public AssetEntity save(AssetEntity assetEntity) throws AmsRequestException {
+    public AssetEntity save(@Valid AssetEntity assetEntity) throws AmsRequestException {
         //TODO implement business rules here
         if (assetEntity == null) throw new AmsRequestException("asset cannot be null");
         if (assetEntity.getId() != null) throw new AmsRequestException("Update is not allowed");

@@ -18,9 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,30 +36,21 @@ public class AssetEntity {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    @NotNull
     private Long id;
 
     @Column(name = "nasset_id", length = 16, updatable = false, nullable = false)//columnDefinition ="varchar",
-    @NotNull
     private UUID assetId;
 
     @Column(name = "nstatus", nullable = false)
-    @NotNull
-    private AmsEntityStatus status;
+    private String status;
 
     @Column(name = "vclassification", nullable = false)
-    @NotNull
-    @NotBlank
     private String classification;
 
     @Column(name = "vdescription", nullable = false)
-    @NotNull
-    @NotBlank
     private String description;
 
     @Column(name = "vasset_tag")
-    @NotNull
-    @NotBlank
     private String assetTag;
 
     @OneToMany(mappedBy = "assetEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -69,9 +58,10 @@ public class AssetEntity {
 
     @CreationTimestamp
     @Column(updatable = false)
-    private OffsetDateTime createDate;
+    private Timestamp createDate;
+
     @UpdateTimestamp
-    private OffsetDateTime lastModifiedDate;
+    private Timestamp lastModifiedDate;
 
     //@Transient
     public void addSpecification(SpecificationEntity specificationEntity) {
@@ -85,7 +75,7 @@ public class AssetEntity {
 
     @PrePersist
     public void autofill() {
-        this.setStatus(AmsEntityStatus.ACTIVE);
+        this.setStatus(AmsEntityStatus.ACTIVE.toString());
         this.setAssetId(UUID.randomUUID());
     }
 }

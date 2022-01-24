@@ -46,7 +46,7 @@ public class AssetLoader implements CommandLineRunner {
                 .assetTag("tag" + i)
                 .build();
 
-        assetEntity.setSpecificationList(new ArrayList<>());
+        assetEntity.setSpecificationList(new ArrayList<>(specificationCount));
         for (int j = 0; j < specificationCount; j++) {
             assetEntity.getSpecificationList().add(specificationList(j, assetEntity));
         }

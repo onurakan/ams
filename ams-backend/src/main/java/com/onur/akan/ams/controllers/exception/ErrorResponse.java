@@ -15,10 +15,12 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
-    private final int status;
-    private final String errorMessage;
+    private final String message;
+
+    private List<String> errors;
+    private List<ValidationError> validationErrors;
+
     private String stackTrace;
-    private List<ValidationError> errors;
 
     @Getter
     @Setter
@@ -29,9 +31,9 @@ public class ErrorResponse {
     }
 
     public void addValidationError(String field, String message) {
-        if (Objects.isNull(errors)) {
-            errors = new ArrayList<>();
+        if (Objects.isNull(validationErrors)) {
+            validationErrors = new ArrayList<>();
         }
-        errors.add(new ValidationError(field, message));
+        validationErrors.add(new ValidationError(field, message));
     }
 }

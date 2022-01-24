@@ -1,15 +1,13 @@
-package com.onur.akan.ams.controllers.model;
+package com.onur.akan.ams.controllers.mapper;
 
+import com.onur.akan.ams.controllers.model.Asset;
 import com.onur.akan.ams.domain.AssetEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
-import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = {DateMapper.class})
 public interface AssetMapper {
-
-    AssetMapper INSTANCE = Mappers.getMapper(AssetMapper.class);
 
     @Mappings({
             @Mapping(target="specificationList", source="asset.specificationList"),

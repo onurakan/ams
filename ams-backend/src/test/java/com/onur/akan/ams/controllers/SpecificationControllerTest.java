@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.onur.akan.ams.AmsApplication;
 import com.onur.akan.ams.bootstrap.AssetLoader;
-import com.onur.akan.ams.controllers.model.SpecificationMapper;
+import com.onur.akan.ams.controllers.mapper.SpecificationMapper;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.repositories.SpecificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,9 @@ public class SpecificationControllerTest {
     private String API_V1_SPECIFICATION = SpecificationController.API_V_1_SPECIFICATION;
 
     @Autowired
+    private SpecificationMapper specificationMapper;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -79,7 +82,7 @@ public class SpecificationControllerTest {
         when(specificationRepository.findBySpecificationId(specificationId)).thenReturn(Optional.of(specificationEntity));
 
         this.mockMvc.perform(get(API_V1_SPECIFICATION+"/"+specificationId)).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().json(gson.toJson(SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity))));
+                .andExpect(content().json(gson.toJson(specificationMapper.specificationEntityToSpecification(specificationEntity))));
     }
 
     @Test
@@ -90,10 +93,10 @@ public class SpecificationControllerTest {
         SpecificationEntity specificationEntity4 = SpecificationEntity.builder().specificationId(UUID.randomUUID()).build();
         when(specificationRepository.findAll()).thenReturn(Arrays.asList(specificationEntity1,specificationEntity2,specificationEntity3,specificationEntity4));
 
-        String out_asset = gson.toJson(Arrays.asList(SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity1),
-                SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity2),
-                SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity3),
-                SpecificationMapper.INSTANCE.specificationEntityToSpecification(specificationEntity4)));
+        String out_asset = gson.toJson(Arrays.asList(specificationMapper.specificationEntityToSpecification(specificationEntity1),
+                specificationMapper.specificationEntityToSpecification(specificationEntity2),
+                specificationMapper.specificationEntityToSpecification(specificationEntity3),
+                specificationMapper.specificationEntityToSpecification(specificationEntity4)));
 
         this.mockMvc.perform(get(API_V1_SPECIFICATION)).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json(out_asset));

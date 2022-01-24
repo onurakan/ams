@@ -3,7 +3,7 @@ package com.onur.akan.ams.controllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.onur.akan.ams.AmsApplication;
-import com.onur.akan.ams.controllers.model.AssetMapper;
+import com.onur.akan.ams.controllers.mapper.AssetMapper;
 import com.onur.akan.ams.domain.AmsEntityStatus;
 import com.onur.akan.ams.domain.AssetEntity;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +40,9 @@ public class AssetControllerIntegrationTest {
     private String API_V1_ASSET = AssetController.API_V_1_ASSET;
 
     @Autowired
+    private AssetMapper assetMapper;
+
+    @Autowired
     private MockMvc mockMvc;
 
     private static Gson gson;
@@ -63,11 +66,11 @@ public class AssetControllerIntegrationTest {
     public void should_read_asset_by_filter() throws Exception {
         //Given AssetLoader creates 50 assets.
 
-        AssetEntity in_assetEntity = AssetEntity.builder().status(AmsEntityStatus.ACTIVE).build();
+        AssetEntity in_assetEntity = AssetEntity.builder().status(AmsEntityStatus.ACTIVE.toString()).build();
 
         mockMvc.perform(post(API_V1_ASSET+"/1/20")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(AssetMapper.INSTANCE.assetEntityToAsset(in_assetEntity)))
+                        .content(gson.toJson(assetMapper.assetEntityToAsset(in_assetEntity)))
                         )
                 .andDo(print())
                 .andExpect(status().isOk())
