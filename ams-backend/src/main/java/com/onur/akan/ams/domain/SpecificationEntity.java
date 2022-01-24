@@ -51,7 +51,7 @@ public class SpecificationEntity {
     @Column(name = "vdataType")
     private String dataType;
 
-    @Column(name = "valphnumericValue")
+    @Column(name = "valphanumericValue")
     private String alphanumericValue;
 
     @Column(name = "valphanumericDescription")

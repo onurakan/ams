@@ -48,7 +48,7 @@
                                 </div>
                             </td>
                             <td>
-                                <input v-if="edit3" v-model="specification.attributeDescription" @blur="edit3 = false; $emit('update'); updateSpecification(specification.id)" @keyup.enter="edit3=false; $emit('update')" v-focus>
+                                <input v-if="edit3" v-model="specification.attributeDescription" @blur="edit3 = false; $emit('update'); updateSpecification(specification.specificationId)" @keyup.enter="edit3=false; $emit('update')" v-focus>
                                 <div v-else>
                                     <label @click="edit3 = true;"> {{specification.attributeDescription}} </label>
                                 </div>
@@ -60,7 +60,7 @@
                                 </div>
                             </td>
                             <td>
-                                <input v-if="edit5" v-model="specification.alphnumericValue" @blur="edit5 = false; $emit('update'); updateSpecification(specification.specificationId)" @keyup.enter="edit5=false; $emit('update')" v-focus>
+                                <input v-if="edit5" v-model="specification.alphanumericValue" @blur="edit5 = false; $emit('update'); updateSpecification(specification.specificationId)" @keyup.enter="edit5=false; $emit('update')" v-focus>
                                 <div v-else>
                                     <label @click="edit5 = true;"> {{specification.alphanumericValue}} </label>
                                 </div>
@@ -143,7 +143,6 @@
                     this.$emit('specificationId-clicked', event.target.innerHTML);
                 },
             updateSpecification : function (specificationId) {
-                alert("specificationId=" + specificationId);
                 this.errors = [];
                 this.isUpdating = true;
                 
