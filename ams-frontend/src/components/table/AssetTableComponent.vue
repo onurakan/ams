@@ -94,7 +94,7 @@
                           this.isLoading = false;
                           if (e.response.status) {
                             this.isError = true;
-                            this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
+                            this.errors.push(e.response.status + "-" + e.response.data.message);
                           }
                       })
                 },

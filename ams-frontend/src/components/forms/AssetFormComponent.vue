@@ -20,7 +20,10 @@
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetStatus">Status:</label></div>
               <div v-if="edit3" class="divTableCell">
-                <input id="assetStatus" v-model.number="asset.status" type="number" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <select v-model="asset.status" id="assetStatus" @blur="$emit('update'); updateAsset()" @keyup.enter="$emit('update')" v-focus>
+                  <option>ACTIVE</option>
+                  <option>PASSIVE</option>
+                </select>
               </div>
               <div v-else class="divTableCell">
                   <label @click="edit3 = true;"> {{asset.status}} </label>
@@ -29,7 +32,7 @@
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetClassification">Classification:</label></div>
               <div v-if="edit4" class="divTableCell">
-                <input id="assetClassification" v-if="edit4" v-model="asset.classification" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <input id="assetClassification" v-if="edit4" v-model="asset.classification" @blur="$emit('update'); updateAsset()" @keyup.enter="$emit('update')" v-focus>
               </div>
               <div v-else class="divTableCell">
                   <label @click="edit4 = true;"> {{asset.classification}} </label>
@@ -38,7 +41,7 @@
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetDescription">Description:</label></div>
               <div v-if="edit5" class="divTableCell">
-                <input id="assetDescription" v-if="edit5" v-model="asset.description" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <input id="assetDescription" v-if="edit5" v-model="asset.description" @blur="$emit('update'); updateAsset()" @keyup.enter="$emit('update')" v-focus>
               </div>
               <div v-else class="divTableCell">
                   <label @click="edit5 = true;"> {{asset.description}} </label>
@@ -47,7 +50,7 @@
             <div class="divTableRow">
               <div class="divTableCell"><label for="assetTag">Tag:</label></div>
               <div v-if="edit6" class="divTableCell">
-                <input id="assetTag" v-if="edit6" v-model="asset.assetTag" @blur="$emit('update'); updateAsset(asset.assetId)" @keyup.enter="$emit('update')" v-focus>
+                <input id="assetTag" v-if="edit6" v-model="asset.assetTag" @blur="$emit('update'); updateAsset()" @keyup.enter="$emit('update')" v-focus>
               </div>
               <div v-else class="divTableCell">
                   <label @click="edit6 = true;"> {{asset.assetTag}} </label>
@@ -118,7 +121,7 @@
                   
                   if (e.response.status) {
                     this.isError = true;
-                    this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
+                    this.errors.push(e.response.status + "-" + e.response.data.message + "<br>" + e.response.data.validationErrors);
                   }
                 })
           } else { //new Asset
@@ -163,7 +166,7 @@
                           this.isUpdating = false;
                           if (e.response.status) {
                             this.isError = true;
-                            this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
+                            this.errors.push(e.response.status + "-" + e.response.data.message);
                           }
                       })
             }
@@ -195,7 +198,7 @@
                         this.isUpdating = false;
                         if (e.response.status) {
                           this.isError = true;
-                          this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
+                          this.errors.push(e.response.status + "-" + e.response.data.message);
                         }
                         
                     })

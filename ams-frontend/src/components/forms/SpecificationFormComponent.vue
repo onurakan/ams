@@ -7,20 +7,23 @@
       <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
     </div>
     <div v-else>
-      
+      <br/>
       <div>
         <div class="divTable" style="width: 51%">
           <div class="divTableBody">
-            <div class="divTableRow">
+            <div class="divTableRow" v-if="specification.specificationId != null">
               <div class="divTableCell"><label for="specificationId">Specification Id:</label></div>
               <div class="divTableCell">
                   <label> {{specification.specificationId}} </label>
               </div>
             </div>
-            <div class="divTableRow">
+            <div class="divTableRow" v-if="specification.status != null">
               <div class="divTableCell"><label for="specificationStatus">Status:</label></div>
               <div v-if="edit2" class="divTableCell">
-                <input id="specificationStatus" v-model.number="specification.status" type="number" @blur="$emit('update'); updateSpecification()" @keyup.enter="$emit('update')" v-focus>
+                <select v-model="specification.status" id="specificationStatus" @blur="$emit('update'); updateSpecification()" @keyup.enter="$emit('update')" v-focus>
+                  <option>ACTIVE</option>
+                  <option>PASSIVE</option>
+                </select>
               </div>
               <div v-else class="divTableCell">
                   <label @click="edit2 = true;"> {{specification.status}} </label>
@@ -109,7 +112,8 @@
             </div>
           </div>
         </div>
-        <button v-if="specification.specificationId == null" v-on:click="createSpecification()" style="margin-left: -80px; margin-top: 10px;" >Create Specification</button>
+        <br/>
+        <button v-if="specification.specificationId == null" v-on:click="createSpecification()" style="margin-left: -140px; margin-top: 10px;" >Create Specification</button>
       </div>
     </div>
   </div>
@@ -183,7 +187,7 @@
                   
                   if (e.response.status) {
                     this.isError = true;
-                    this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
+                    this.errors.push(e.response.status + "-" + e.response.data.message);
                   }
                 })
           } else { //new Specification
@@ -218,7 +222,6 @@
           this.errors = [];
 
           if (this.specification.attribute != null &&
-              this.specification.status != null &&
               this.specification.attributeDescription != null &&
               this.specification.dataType != null &&
               this.specification.alphanumericValue != null &&
@@ -251,13 +254,14 @@
                                         console.log("SpecificationFormComponent->createSpecification response:" + JSON.stringify(response.data));
                                         this.isUpdating = false;
                                         this.specification.specificationId = response.data.specificationId;
+                                        this.specification.status = response.data.status;
                                         alert("specificationId=" + this.specification.specificationId + " is created :)");
                                     })
                     .catch(e => {
                         this.isUpdating = false;
                         if (e.response.status) {
                             this.isError = true;
-                            this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
+                            this.errors.push(e.response.status + "-" + e.response.data.message);
                         }
                     })
             }
@@ -292,7 +296,7 @@
                         this.isUpdating = false;
                         if (e.response.status) {
                           this.isError = true;
-                          this.errors.push(e.response.status + "-" + e.response.data.errorMessage);
+                          this.errors.push(e.response.status + "-" + e.response.data.message);
                         }
                     })
           }

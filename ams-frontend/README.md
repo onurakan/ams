@@ -34,6 +34,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - https://divtable.com/generator/
 
+- https://codesource.io/how-to-dynamically-create-reactive-properties-in-vue/ using this, removed data properties with null initial values <-- Not worked!!!
+
+
 
 # Installed Npm packages:
 npm install vue bootstrap bootstrap-vue
