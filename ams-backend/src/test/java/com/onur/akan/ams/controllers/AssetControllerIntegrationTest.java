@@ -6,6 +6,7 @@ import com.onur.akan.ams.AmsApplication;
 import com.onur.akan.ams.controllers.mapper.AssetMapper;
 import com.onur.akan.ams.domain.AmsEntityStatus;
 import com.onur.akan.ams.domain.AssetEntity;
+import com.onur.akan.ams.services.AssetService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -36,6 +38,9 @@ public class AssetControllerIntegrationTest {
     private String API_V1_ASSET = AssetController.API_V_1_ASSET;
 
     @Autowired
+    private AssetService assetService;
+
+    @Autowired
     private AssetMapper assetMapper;
 
     @Autowired
@@ -49,8 +54,10 @@ public class AssetControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void should_read_asset_count_50() throws Exception {
         //Given AssetLoader creates 50 assets.
+        assetService.insertInitialAssets(50, 10);
 
         this.mockMvc.perform(get(API_V1_ASSET))
                 //.andDo(print())
@@ -59,8 +66,10 @@ public class AssetControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void should_read_asset_by_filter() throws Exception {
         //Given AssetLoader creates 50 assets.
+        assetService.insertInitialAssets(50, 10);
 
         AssetEntity in_assetEntity = AssetEntity.builder().status(AmsEntityStatus.ACTIVE.toString()).build();
 

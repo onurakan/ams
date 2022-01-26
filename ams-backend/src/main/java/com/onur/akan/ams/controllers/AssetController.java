@@ -99,6 +99,7 @@ public class AssetController {
         assetEntity.setStatus(in_assetEntity.getStatus());
         assetEntity.setClassification(in_assetEntity.getClassification());
         assetEntity.setDescription(in_assetEntity.getDescription());
+        assetEntity.setPrice(in_assetEntity.getPrice());
 
        assetService.update(assetEntity);
     }

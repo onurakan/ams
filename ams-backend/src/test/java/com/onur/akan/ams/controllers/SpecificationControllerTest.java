@@ -2,20 +2,17 @@ package com.onur.akan.ams.controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.onur.akan.ams.AmsApplication;
-import com.onur.akan.ams.bootstrap.AssetLoader;
 import com.onur.akan.ams.controllers.mapper.SpecificationMapper;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.repositories.SpecificationRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,11 +30,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
-@AutoConfigureMockMvc
+@WebMvcTest(SpecificationController.class)
+@ComponentScan(basePackages = {"com.onur.akan.ams.services", "com.onur.akan.ams.controllers.mapper"})
+@AutoConfigureDataJpa
+
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
+//@AutoConfigureMockMvc
+
 @WithMockUser(username = "user", roles = {"USER", "ADMIN"})
-@Setter
-@Slf4j
 @RequiredArgsConstructor
 public class SpecificationControllerTest {
 
@@ -51,9 +51,6 @@ public class SpecificationControllerTest {
 
     @MockBean
     private SpecificationRepository specificationRepository;
-
-    @MockBean
-    private AssetLoader assetLoader;//in order to ignore this loader, mock it out.
 
     private static Gson gson;
 

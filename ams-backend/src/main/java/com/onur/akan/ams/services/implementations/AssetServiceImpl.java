@@ -2,6 +2,7 @@ package com.onur.akan.ams.services.implementations;
 
 import com.onur.akan.ams.controllers.exception.AmsRequestException;
 import com.onur.akan.ams.domain.AssetEntity;
+import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.repositories.AssetRepository;
 import com.onur.akan.ams.services.AssetService;
 import lombok.NonNull;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,5 +80,53 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public void delete(Long id) {
         assetRepository.deleteById(id);
+    }
+
+
+    @Override
+    public void insertInitialAssets(Integer assetCount, Integer specificationCount) throws AmsRequestException {
+        long count = assetRepository.count();
+        if (count == 0) {
+            log.info(String.format("No asset in repository. Initializing repo with %s asset, %s specification", assetCount, specificationCount));
+
+            for (int i = 0; i < assetCount; i++) {
+                save(asset(i, specificationCount));
+            }
+        } else {
+            log.info(String.format("There are %s assets in repo. Will not initialize more!", count));
+        }
+    }
+
+    private AssetEntity asset(Integer i, Integer specificationCount) {
+        AssetEntity assetEntity = AssetEntity.builder()
+                .classification("classification" + i)
+                .description("description" + i)
+                .assetTag("tag" + i)
+                .price(BigDecimal.valueOf(12.90))
+                .build();
+
+        assetEntity.setSpecificationList(new ArrayList<>(specificationCount));
+        for (int j = 0; j < specificationCount; j++) {
+            assetEntity.getSpecificationList().add(specificationList(j, assetEntity));
+        }
+
+        return assetEntity;
+    }
+
+    private SpecificationEntity specificationList(Integer i, AssetEntity assetEntity) {
+        SpecificationEntity specificationEntity = SpecificationEntity.builder()
+                .alphanumericDescription("alphanumericDescription" + i)
+                .attribute("attribute" + i)
+                .attributeDescription("attributeDescription" +i)
+                .tableValue("tableValue" + i)
+                .unitOfMeasure("unitOfMeasure" + i)
+                .numericDescription("numericDescription" +i)
+                .numericValue("numericValue" +i)
+                .dataType("dataType" + i)
+                .alphanumericValue("alphanumericValue" + i)
+                .assetEntity(assetEntity)
+                .build();
+
+        return specificationEntity;
     }
 }

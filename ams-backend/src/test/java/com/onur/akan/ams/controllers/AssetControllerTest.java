@@ -1,30 +1,32 @@
 package com.onur.akan.ams.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.onur.akan.ams.AmsApplication;
-import com.onur.akan.ams.bootstrap.AssetLoader;
 import com.onur.akan.ams.controllers.mapper.AssetMapper;
+import com.onur.akan.ams.controllers.model.AssetDto;
 import com.onur.akan.ams.domain.AmsEntityStatus;
 import com.onur.akan.ams.domain.AssetEntity;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.repositories.AssetRepository;
 import com.onur.akan.ams.services.implementations.AssetServiceImpl;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,19 +40,35 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
-@AutoConfigureMockMvc
+/**
+ * Do not use: import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+ *
+ */
+
+@ExtendWith(RestDocumentationExtension.class)
+@AutoConfigureRestDocs(uriScheme = "http", uriHost = "localhost", uriPort = 8080)
+
+@WebMvcTest(AssetController.class)
+@ComponentScan(basePackages = {"com.onur.akan.ams.services", "com.onur.akan.ams.controllers.mapper"})
+@AutoConfigureDataJpa
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
+//@AutoConfigureMockMvc
+
 @WithMockUser(username = "user", roles = {"USER", "ADMIN"})
-@Setter
-@Slf4j
 @RequiredArgsConstructor
-public class AssetControllerTest {
+public class AssetControllerTest extends BaseTest {
     
     private String API_V1_ASSET = AssetController.API_V_1_ASSET;
 
@@ -63,10 +81,10 @@ public class AssetControllerTest {
     @MockBean
     private AssetRepository assetRepository;
 
-    @MockBean
-    private AssetLoader assetLoader;//in order to ignore this loader, mock it out.
-
     private static Gson gson;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeAll
     public static void setup () {
@@ -89,13 +107,28 @@ public class AssetControllerTest {
     @Test
     public void should_read_asset_one() throws Exception {
         UUID assetId = UUID.randomUUID();
-        AssetEntity assetEntity  = AssetEntity.builder().assetId(assetId).build();
+        AssetEntity assetEntity  = aAsset(assetId);
         when(assetRepository.readByAssetId(assetId)).thenReturn(Optional.of(assetEntity));
 
-        this.mockMvc.perform(get(API_V1_ASSET + "/" + assetId))
+        AssetDto assetDto = assetMapper.assetEntityToAsset(assetEntity);
+
+        this.mockMvc.perform(get(API_V1_ASSET + "/{assetId}", assetId))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(content().json(gson.toJson(assetMapper.assetEntityToAsset(assetEntity))));
+                    .andExpect(content().json(objectMapper.writeValueAsString(assetDto)))
+                    .andDo(document("v1/asset-read",
+                            pathParameters(
+                                    parameterWithName("assetId").description("UUID of desired asset to get.")
+                            ),
+                            responseFields(
+                                    fieldWithPath("assetId").description("UUID of asset."),
+                                    fieldWithPath("status").description("Status of asset."),
+                                    fieldWithPath("assetTag").description("Tag of asset."),
+                                    fieldWithPath("classification").description("Classification of asset."),
+                                    fieldWithPath("description").description("Description of asset."),
+                                    fieldWithPath("price").description("Price of asset."),
+                                    fieldWithPath("createDate").description("Create date of asset.")
+                            )));
     }
 
     @Test
@@ -142,15 +175,36 @@ public class AssetControllerTest {
     public void should_create_asset() throws Exception {
         UUID assetId = UUID.randomUUID();
 
-        AssetEntity in_assetEntity = AssetEntity.builder().classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
-        AssetEntity out_assetEntity = AssetEntity.builder().assetId(assetId).status(AmsEntityStatus.ACTIVE.toString()).classification("NEW").description("New Asset Creation").assetTag("A_TAG").build();
+        AssetEntity in_assetEntity = newAsset(assetId);
+        AssetEntity out_assetEntity = aAsset(assetId);
+
         when(assetRepository.save(in_assetEntity)).thenReturn(out_assetEntity);
+
+        ConstrainedFields fields = new ConstrainedFields(AssetDto.class);
 
         mockMvc.perform(post(API_V1_ASSET)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(assetMapper.assetEntityToAsset(in_assetEntity))))
+                        .content(objectMapper.writeValueAsString(assetMapper.assetEntityToAsset(in_assetEntity))))
+                .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().json(gson.toJson(assetMapper.assetEntityToAssetIgnoreSpecificationList(out_assetEntity))));
+                .andExpect(content().json(objectMapper.writeValueAsString(assetMapper.assetEntityToAssetIgnoreSpecificationList(out_assetEntity))))
+                .andDo(document("v1/asset-create",
+                        requestFields(
+                                //fields.withPath("assetId").ignored(),
+                                fields.withPath("assetTag").description("Tag of asset."),
+                                fields.withPath("classification").description("Classification of asset."),
+                                fields.withPath("description").description("Description of asset."),
+                                fields.withPath("price").description("Price of asset.")
+                        ),
+                        responseFields(
+                                fieldWithPath("assetId").description("UUID of asset."),
+                                fieldWithPath("status").description("Status of asset."),
+                                fieldWithPath("assetTag").description("Tag of asset."),
+                                fieldWithPath("classification").description("Classification of asset."),
+                                fieldWithPath("description").description("Description of asset."),
+                                fieldWithPath("price").description("Price of asset."),
+                                fieldWithPath("createDate").description("Create date of asset.")
+                        )));;
     }
 
     @Test

@@ -59,14 +59,14 @@ public class AssetDto {
 
     //@JsonSerialize(using = CustomLocalDateSerializer.class)
     //@JsonDeserialize(using = CustomLocalDateDeSerializer.class)
-    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    //@JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     @Null(groups = {OnCreate.class})
     @NotNull(groups = {OnUpdate.class})
     private OffsetDateTime createDate;
 
     //@JsonSerialize(using = CustomLocalDateSerializer.class)
     //@JsonDeserialize(using = CustomLocalDateDeserializer.class)
-    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    //@JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     @Null(groups = {OnCreate.class})
     @NotNull(groups = {OnUpdate.class})
     private OffsetDateTime lastModifiedDate;

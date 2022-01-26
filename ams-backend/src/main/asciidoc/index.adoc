@@ -1,0 +1,31 @@
+= AMS - Asset Management System Docs
+Onur Akan;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+
+AMS system docs demonstrating how to call ams-backend rest api.
+
+`AssetControllerTest` and `SpecificationControllerTest` makes a call to a very simple service and produces three
+documentation snippets.
+
+One showing how to make a request using cURL:
+
+include::{snippets}/v1/asset-read/curl-request.adoc[]
+
+One showing the HTTP request:
+
+include::{snippets}/v1/asset-read/http-request.adoc[]
+
+And one showing the HTTP response:
+
+include::{snippets}/v1/asset-read/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/asset-read/response-body.adoc[]
+
+Response Fields:
+include::{snippets}/v1/asset-read/response-fields.adoc[]
+
+
+
