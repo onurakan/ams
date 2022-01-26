@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
@@ -50,8 +51,11 @@ public class AssetEntity {
     @Column(name = "vdescription", nullable = false)
     private String description;
 
-    @Column(name = "vasset_tag")
+    @Column(name = "vasset_tag", nullable = false)
     private String assetTag;
+
+    @Column(name = "nprice", nullable = false)
+    private BigDecimal price;
 
     @OneToMany(mappedBy = "assetEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SpecificationEntity> specificationList;

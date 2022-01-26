@@ -7,8 +7,6 @@ import com.onur.akan.ams.controllers.mapper.AssetMapper;
 import com.onur.akan.ams.domain.AmsEntityStatus;
 import com.onur.akan.ams.domain.AssetEntity;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = AmsApplication.class)
 @AutoConfigureMockMvc
 @WithMockUser(username = "user", roles = {"USER", "ADMIN"})
-@Setter
-@Slf4j
 @RequiredArgsConstructor
 public class AssetControllerIntegrationTest {
 

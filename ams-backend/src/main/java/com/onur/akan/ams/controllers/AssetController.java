@@ -2,7 +2,7 @@ package com.onur.akan.ams.controllers;
 
 import com.onur.akan.ams.controllers.exception.AmsRequestException;
 import com.onur.akan.ams.controllers.mapper.AssetMapper;
-import com.onur.akan.ams.controllers.model.Asset;
+import com.onur.akan.ams.controllers.model.AssetDto;
 import com.onur.akan.ams.controllers.model.OnCreate;
 import com.onur.akan.ams.controllers.model.OnUpdate;
 import com.onur.akan.ams.controllers.model.Page;
@@ -45,7 +45,7 @@ public class AssetController {
     private final AssetMapper assetMapper;
 
     @GetMapping
-    public ResponseEntity<List<Asset>> readAssets() {
+    public ResponseEntity<List<AssetDto>> readAssets() {
         val assets = assetService.listAll().stream()
                                                     .map(ae -> assetMapper.assetEntityToAssetIgnoreSpecificationList((AssetEntity) ae))
                                                     .collect(Collectors.toList());
@@ -54,17 +54,18 @@ public class AssetController {
     }
 
     @GetMapping("/{assetId}")
-    public ResponseEntity<Asset>  getAssetByAssetId(@PathVariable UUID assetId) {
+    public ResponseEntity<AssetDto>  getAssetByAssetId(@PathVariable UUID assetId) {
         val assetEntity = assetService.findByAssetId(assetId);
         return assetEntity != null ? ResponseEntity.ok(assetMapper.assetEntityToAssetIgnoreSpecificationList(assetEntity)) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/{currentPageNumber}/{pageSize}")
-    public ResponseEntity<Page<Asset>> getAssetsByFilter(@PathVariable("currentPageNumber") @Min(value = 1, message = "Page can be minimum = 1")  int currentPageNumber,
-                                                         @PathVariable("pageSize") @Min(value = 1, message = "Size can be min=1, max=100") int pageSize,
-                                                         @RequestBody Asset asset) {
+    public ResponseEntity<Page<AssetDto>> getAssetsByFilter(@PathVariable("currentPageNumber")
+                                                            @Min(value = 1, message = "Page can be minimum = 1")  int currentPageNumber,
+                                                            @PathVariable("pageSize") @Min(value = 1, message = "Size can be min=1, max=100") int pageSize,
+                                                            @RequestBody AssetDto assetDto) {
 
-        val assetEntityPage = assetService.findByExampleMatcher(assetMapper.assetToAssetEntity(asset), currentPageNumber, pageSize);
+        val assetEntityPage = assetService.findByExampleMatcher(assetMapper.assetToAssetEntity(assetDto), currentPageNumber, pageSize);
 
         if (assetEntityPage == null) new NoSuchElementException();
 
@@ -75,12 +76,12 @@ public class AssetController {
         String previousPage = assetEntityPage.hasPrevious()? "/asset/" + (currentPageNumber -1) + "/" +  pageSize : null;//TODO put host address in URL
         String nextPage     = assetEntityPage.hasNext() ?    "/asset/" + (currentPageNumber + 1) + "/" +  pageSize : null;//TODO put host address in URL
 
-        return ResponseEntity.ok(Page.<Asset>builder().data(assets).previousPage(previousPage).nextPage(nextPage).build());
+        return ResponseEntity.ok(Page.<AssetDto>builder().data(assets).previousPage(previousPage).nextPage(nextPage).build());
     }
 
     @PostMapping
-    public ResponseEntity<Asset> createAsset(@Validated(OnCreate.class) @RequestBody Asset asset) throws AmsRequestException {
-        val assetEntity = assetMapper.assetToAssetEntity(asset);
+    public ResponseEntity<AssetDto> createAsset(@Validated(OnCreate.class) @RequestBody AssetDto assetDto) throws AmsRequestException {
+        val assetEntity = assetMapper.assetToAssetEntity(assetDto);
         val newAssetEntity = assetService.save(assetEntity);
         val newAsset = assetMapper.assetEntityToAsset(newAssetEntity);
 
@@ -89,11 +90,11 @@ public class AssetController {
 
     @PutMapping(value = "/{assetId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAsset(@PathVariable UUID assetId, @Validated(OnUpdate.class) @RequestBody Asset asset) throws AmsRequestException {
+    public void updateAsset(@PathVariable UUID assetId, @Validated(OnUpdate.class) @RequestBody AssetDto assetDto) throws AmsRequestException {
         val assetEntity = assetService.findByAssetId(assetId);
         if (assetEntity == null) new NoSuchElementException();
 
-        val in_assetEntity = assetMapper.assetToAssetEntity(asset);
+        val in_assetEntity = assetMapper.assetToAssetEntity(assetDto);
         assetEntity.setAssetTag(in_assetEntity.getAssetTag());
         assetEntity.setStatus(in_assetEntity.getStatus());
         assetEntity.setClassification(in_assetEntity.getClassification());

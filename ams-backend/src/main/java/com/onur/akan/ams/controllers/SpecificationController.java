@@ -4,7 +4,7 @@ import com.onur.akan.ams.controllers.exception.AmsRequestException;
 import com.onur.akan.ams.controllers.mapper.SpecificationMapper;
 import com.onur.akan.ams.controllers.model.OnCreate;
 import com.onur.akan.ams.controllers.model.OnUpdate;
-import com.onur.akan.ams.controllers.model.Specification;
+import com.onur.akan.ams.controllers.model.SpecificationDto;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import com.onur.akan.ams.services.SpecificationService;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +44,9 @@ public class SpecificationController {
     private final SpecificationMapper specificationMapper;
 
     @GetMapping
-    public ResponseEntity<List<Specification>> readSpecifications(@RequestParam(required = false) UUID assetId) {
+    public ResponseEntity<List<SpecificationDto>> readSpecifications(@RequestParam(required = false) UUID assetId) {
 
-        List<Specification> specifications = null;
+        List<SpecificationDto> specifications = null;
         if (assetId == null) {
             specifications = specificationService.listAll().stream()
                                                     .map(se -> specificationMapper.specificationEntityToSpecification((SpecificationEntity) se))
@@ -62,7 +62,7 @@ public class SpecificationController {
     }
 
     @GetMapping("/{specificationId}")
-    public ResponseEntity<Specification>  getSpecificationById(@PathVariable UUID specificationId) {
+    public ResponseEntity<SpecificationDto>  getSpecificationById(@PathVariable UUID specificationId) {
         val specificationEntity = specificationService.findBySpecificationId(specificationId);
         val specification           = specificationMapper.specificationEntityToSpecification(specificationEntity);
 
@@ -70,8 +70,8 @@ public class SpecificationController {
     }
 
     @PostMapping
-    public ResponseEntity<Specification> createSpecification(@Validated(OnCreate.class) @RequestBody Specification specification) throws AmsRequestException {
-        val newSpecificationEntity = specificationService.save(specificationMapper.specificationToSpecificationEntity(specification));
+    public ResponseEntity<SpecificationDto> createSpecification(@Validated(OnCreate.class) @RequestBody SpecificationDto specificationDto) throws AmsRequestException {
+        val newSpecificationEntity = specificationService.save(specificationMapper.specificationToSpecificationEntity(specificationDto));
         val newSpecification = specificationMapper.specificationEntityToSpecification(newSpecificationEntity);
 
         return ResponseEntity.created(URI.create(API_V_1_SPECIFICATION + "/" + newSpecificationEntity.getSpecificationId())).body(newSpecification);//TODO put full url (host+contextPath+resourcePath)
@@ -79,11 +79,11 @@ public class SpecificationController {
 
     @PutMapping(value = "/{specificationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateSpecification(@PathVariable UUID specificationId, @Validated(OnUpdate.class) @RequestBody Specification specification) throws AmsRequestException {
+    public void updateSpecification(@PathVariable UUID specificationId, @Validated(OnUpdate.class) @RequestBody SpecificationDto specificationDto) throws AmsRequestException {
         val specificationEntity = specificationService.findBySpecificationId(specificationId);
         if (specificationEntity == null) new NoSuchElementException();
 
-        val in_specificationEntity = specificationMapper.specificationToSpecificationEntity(specification);
+        val in_specificationEntity = specificationMapper.specificationToSpecificationEntity(specificationDto);
         specificationEntity.setStatus(in_specificationEntity.getStatus());
         specificationEntity.setAttribute(in_specificationEntity.getAttribute());
         specificationEntity.setAlphanumericDescription(in_specificationEntity.getAlphanumericDescription());

@@ -1,6 +1,6 @@
 package com.onur.akan.ams.controllers.mapper;
 
-import com.onur.akan.ams.controllers.model.Specification;
+import com.onur.akan.ams.controllers.model.SpecificationDto;
 import com.onur.akan.ams.domain.SpecificationEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 public interface SpecificationMapper {
 
     @Mapping(target="assetEntity.assetId", source="assetId")
-    SpecificationEntity specificationToSpecificationEntity(Specification specification);
+    SpecificationEntity specificationToSpecificationEntity(SpecificationDto specificationDto);
     @Mapping(target="assetId", source="assetEntity.assetId")
-    Specification specificationEntityToSpecification(SpecificationEntity specificationEntity);
+    SpecificationDto specificationEntityToSpecification(SpecificationEntity specificationEntity);
 }
