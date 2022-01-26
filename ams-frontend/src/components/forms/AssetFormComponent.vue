@@ -56,6 +56,15 @@
                   <label @click="edit6 = true;"> {{asset.assetTag}} </label>
               </div>
             </div>
+            <div class="divTableRow">
+              <div class="divTableCell"><label for="assetPrice">Price:</label></div>
+              <div v-if="edit7" class="divTableCell">
+                <input id="assetPrice" v-if="edit7" v-model="asset.price" @blur="$emit('update'); updateAsset()" @keyup.enter="$emit('update')" v-focus>
+              </div>
+              <div v-else class="divTableCell">
+                  <label @click="edit7 = true;"> {{asset.price}} </label>
+              </div>
+            </div>
           </div>
         </div>
         <button v-if="asset.assetId == null" v-on:click="createAsset()" style="margin-left: -80px; margin-top: 10px;" >Create Asset</button>
@@ -81,12 +90,14 @@
             status: null,
             classification: null,
             description: null,
-            assetTag: null
+            assetTag: null,
+            price: null
           },
           edit3: false,
           edit4: false,
           edit5: false,
           edit6: false,
+          edit7: false,
           errors:[]
       }
     },
@@ -130,12 +141,14 @@
                             status: null,
                             classification: null,
                             description: null,
-                            assetTag: null
+                            assetTag: null,
+                            price: null
                           };
             this.edit3 = true;
             this.edit4 = true;
             this.edit5 = true;
             this.edit6 = true;
+            this.edit7 = true;
           }
         },
         createAsset : function () {
@@ -149,6 +162,7 @@
               this.edit4 = false;
               this.edit5 = false;
               this.edit6 = false;
+              this.edit7 = false;
               
               alert("New asset will be created!");
               console.log("AssetFormComponent->createAsset request:" +JSON.stringify(this.asset));
@@ -182,6 +196,7 @@
             this.edit4 = false;
             this.edit5 = false;
             this.edit6 = false;
+            this.edit7 = false;
 
             alert("assetId=" + assetId + " will be updated!");
             this.isUpdating = true;

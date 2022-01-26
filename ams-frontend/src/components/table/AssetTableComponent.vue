@@ -16,6 +16,7 @@
                     <th>Classification</th>
                     <th>Description</th>
                     <th>Tag</th>
+                    <th>Price</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,6 +26,7 @@
                         <td><input v-model="asset.classification" placeholder="Classification" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
                         <td><input v-model="asset.description" placeholder="Description" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
                         <td><input v-model="asset.assetTag" placeholder="Tag" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
+                        <td><input v-model="asset.price" placeholder="Tag" @blur="filterAssets()" @keyup.enter="filterAssets()"/></td>
                     </tr>
                     <tr v-for="asset in filteredAssets" :key="asset.id">
                         <td><a href="javascript:void(0);" v-on:click="currentAssetId">{{ asset.assetId }}</a></td>
@@ -32,6 +34,7 @@
                         <td>{{ asset.classification }}</td>
                         <td>{{ asset.description }}</td>
                         <td>{{ asset.assetTag }}</td>
+                        <td>{{ asset.price }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -63,7 +66,8 @@
                     status: null,
                     classification: null,
                     description: null,
-                    assetTag: null
+                    assetTag: null,
+                    price: null
                 },
                 errors:[]
             }
