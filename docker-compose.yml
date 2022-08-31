@@ -1,0 +1,112 @@
+version: "3.9"
+
+x-default-ams-backend-service: &default-ams-backend-service
+    image: ams-backend-img
+    build:
+      context: ams-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./ams-backend/target/:/home/ams_user"
+    networks:
+      - ams-network
+    command: java -jar /home/ams_user/ams-backend-0.0.1-SNAPSHOT.jar com.onur.akan.ams.AmsApplication
+
+
+services:
+#  ams-nginx-webserver-service:
+#    image: nginx
+#    volumes:
+#      - ams-nginx-webserver:/etc/nginx:ro
+#    links:
+#      - shop1
+#      - shop2
+#    ports:
+#    - "80:80"
+#    
+#  ams-webserver1:
+#    build: .
+#    hostname: ams1
+#    links:
+#      - redis
+#    ports:
+#      - "8081:8080"
+#
+#  ams-webserver2:
+#    build: .
+#    hostname: ams2
+#    links:
+#      - redis
+#    ports:
+#      - "8082:8080"
+  
+# ams-session-store-redis:
+#   image: "redis:alpine"
+#   hostname: redis
+#   command: redis-server --requirepass sOmE_sEcUrE_pAsS
+#   ports:
+#     - "6379:6379"
+#   volumes:
+#     - ./data/ams-session-store-redis:/var/lib/redis
+#     - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+#   environment:
+#     - REDIS_REPLICATION_MODE=master
+#   networks:
+#     - ams-network
+
+  ams-mysql-db-service:
+    container_name: ams-mysql-db_container
+    profiles: ["profile-mysql"]
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD : p_root
+      MYSQL_USER: ams_db_user
+      MYSQL_PASSWORD: p_ams_db_user
+      MYSQL_DATABASE: ams_db
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - ./data/ams-mysql-db:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    networks:
+      - ams-network
+
+  ams-backend-mysql-service:
+    << : *default-ams-backend-service
+    container_name: ams-backend-mysql_container
+    profiles: ["profile-mysql"]
+    depends_on:
+        - ams-mysql-db-service # TODO bu calismadi kontrol edilecek
+    environment:
+      SPRING_PROFILES_ACTIVE : container
+      DB_URL : jdbc:mysql://ams-mysql-db-service:3306/ams_db
+      DB_USER : ams_db_user
+      DB_PASSWORD : p_ams_db_user
+      DB_SPRING_JPA_SHOW_SQL: 'true'
+
+  ams-backend-h2-service:
+    << : *default-ams-backend-service
+    container_name: ams-backend-h2_container
+    profiles: ["profile-default"]
+
+  ams-frontend-service:
+    profiles: ["profile-default", "profile-mysql"]
+    container_name: ams-frontend_container
+    build:
+      context: ams-frontend
+      target: 'develop-stage'
+    environment:
+      VUE_APP_AMS_BACKEND_URL: http://localhost:8080/api/v1
+    ports:
+    - '80:8080' #HOST_PORT:CONTAINER_PORT
+    volumes:
+    - './ams-frontend:/app'
+    command: /bin/sh -c "yarn serve"
+      
+networks:
+  ams-network:
+#  node-net:
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 172.28.0.0/16
